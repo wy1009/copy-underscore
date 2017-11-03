@@ -1,0 +1,22 @@
+{
+  "name": "underscore",
+  "version": "1.0.0",
+  "description": "抄一遍underscore！><",
+  "main": "underscore.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wy1009/underscore.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wy1009/underscore/issues"
+  },
+  "homepage": "https://github.com/wy1009/underscore#readme",
+  "dependencies": {
+    "qunitjs": "^2.4.1"
+  }
+}
