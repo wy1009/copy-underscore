@@ -1,9 +1,6 @@
 ;(function () {
     let root = typeof self === 'object' && self.self === self && self || {}
 
-    // ES5原生函数实现
-    var nativeKeys = Object.keys
-
     var _ = function () {
 
     }
@@ -24,9 +21,9 @@
         }
     }
 
-    var getLength = shallowProperty('length')
-
+    // 帮助集合方法确定一个集合应该被当做数组还是对象来迭代
     var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1 // 能精确表示的最大整数
+    var getLength = shallowProperty('length')
     var isArrayLike = function (collection) {
         var length = getLength(collection)
         return typeof length === 'number' && length >= 0 && length <= MAX_ARRAY_INDEX
@@ -43,12 +40,41 @@
         }
     }
 
-    _.keys = function () {
+    _.keys = function (obj) {
+        if (!_.isObject(obj)) {
+            return []
+        }
+        if (Object.keys) {
+            return Object.keys(obj)
+        }
+        var keys = []
+        for (var key in obj) {
 
+        }
     }
 
+    _.has = function (obj, path) {
+        if (!_.isArray(path)) {
+            return obj && Object.prototype.hasOwnProperty.call(obj, path)
+        }
+        for (var i = 0; i < path.length; i ++) {
+            if (!obj || !Object.prototype.hasOwnProperty.call(obj, path[i])) {
+                return false
+            }
+            obj = obj[path[i]]
+        }
+        return !!path.length
+    }
+
+    // 传入的变量是否是对象
     _.isObject = function (obj) {
         var type = typeof obj
-        return type === 'object' || type === 'function' && !!obj // *?*2 此处为什么一定要强制转换为Boolean值
+        return type === 'object' || type === 'function' && !!obj
+    }
+
+    // 传入的变量是否为数组
+    _.isArray = Array.isArray || function (obj) {
+        // 借用Object原型上的函数，保证原型链上没有Object.prototype的变量也能使用该方法
+        return Object.prototype.toString.call(obj) === '[object Array]'
     }
 })()
