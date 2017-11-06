@@ -36,17 +36,11 @@
                 iteratee(obj[i], i, obj)
             }
         } else {
-
+            var keys = _.keys(obj)
+            for (var i = 0; i < keys.length; i ++) {
+                iteratee(obj[keys[i]], keys[i], obj)
+            }
         }
-    }
-
-    _.values = function (obj) {
-        var keys = _.keys(obj)
-        var values = Array(keys.length)
-        for (var i = 0; i < keys.length; i ++) {
-            values[i] = obj[keys[i]]
-        }
-        return values
     }
 
     _.keys = function (obj) {
@@ -63,6 +57,7 @@
                 keys.push(key)
             }
         }
+        // 等待走解决<IE9的bug路线
         return keys
     }
 
@@ -82,7 +77,8 @@
     // 传入的变量是否是对象
     _.isObject = function (obj) {
         var type = typeof obj
-        return type === 'object' || type === 'function' && !!obj
+        // typeof null为object，不会继续判断，因此type === 'function'与type === 'object'顺序不能颠倒
+        return type === 'function' || type === 'object' && !!obj
     }
 
     // 传入的变量是否为数组
