@@ -13,7 +13,7 @@
     }
 
     // *?*1 不知道为什么要这么写，姑且理解为是基于函数式编程“只传一个参数”的规定吧
-    // *?*1 顺便一提也不知道为什么一定要把函数写成函数表达式而不是函数声明，导致函数表达式一定要放在函数调用的前面
+    // *?*1 也不知道为什么一定要把函数写成函数表达式而不是函数声明，导致函数表达式一定要放在函数调用的前面
     var shallowProperty = function (key) {
         return function (obj) {
             // 用void 0代替undefined，防止undefined被重写
@@ -40,6 +40,15 @@
         }
     }
 
+    _.values = function (obj) {
+        var keys = _.keys(obj)
+        var values = Array(keys.length)
+        for (var i = 0; i < keys.length; i ++) {
+            values[i] = obj[keys[i]]
+        }
+        return values
+    }
+
     _.keys = function (obj) {
         if (!_.isObject(obj)) {
             return []
@@ -49,8 +58,12 @@
         }
         var keys = []
         for (var key in obj) {
-
+            // 防止将原型中的方法和属性也推入到数组
+            if (_.has(obj, key)) {
+                keys.push(key)
+            }
         }
+        return keys
     }
 
     _.has = function (obj, path) {
