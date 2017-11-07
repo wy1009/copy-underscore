@@ -55,4 +55,10 @@
         assert.ok(_.has({ a: { b: 'c' } }, ['a', 'b']), true, '可以检测嵌套属性')
         assert.notOk(_.has({ a: child }), ['a', 'foo'], '不会检测嵌套属性的prototype')
     })
+
+    QUnit.test('isArray', function (assert) {
+        assert.notOk(_.isArray(void 0), 'undefined不是数组')
+        assert.notOk(_.isArray(arguments), 'arguments不是数组')
+        assert.ok(_.isArray([1, 2, 3]), '可以检测数组')
+    })
 })()

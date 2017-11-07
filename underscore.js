@@ -17,7 +17,7 @@
     var shallowProperty = function (key) {
         return function (obj) {
             // 用void 0代替undefined，防止undefined被重写
-            return obj === null ? void 0 : obj[key]
+            return !obj ? void 0 : obj[key]
         }
     }
 
