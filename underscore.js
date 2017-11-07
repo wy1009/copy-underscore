@@ -63,7 +63,7 @@
 
     _.has = function (obj, path) {
         if (!_.isArray(path)) {
-            return obj && Object.prototype.hasOwnProperty.call(obj, path)
+            return !!obj && Object.prototype.hasOwnProperty.call(obj, path)
         }
         for (var i = 0; i < path.length; i ++) {
             if (!obj || !Object.prototype.hasOwnProperty.call(obj, path[i])) {
@@ -74,7 +74,7 @@
         return !!path.length
     }
 
-    // 传入的变量是否是对象
+    // 传入的变量是否是对象类型。函数、object、数组、DOM元素被视为对象类型。
     _.isObject = function (obj) {
         var type = typeof obj
         // typeof null为object，不会继续判断，因此type === 'function'与type === 'object'顺序不能颠倒
