@@ -61,4 +61,19 @@
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray([1, 2, 3]), '可以检测数组')
     })
+
+    QUnit.test('isFunction', function (assert) {
+        assert.notOk(_.isFunction(void 0), 'undefined不是函数')
+        assert.notOk(_.isFunction([1, 2, 3]), '数组不是函数')
+        assert.notOk(_.isFunction('moe'), '字符串不是函数')
+        assert.ok(_.isFunction(_.isFunction), '函数是函数')
+        assert.ok(_.isFunction(function () {}), '匿名函数是函数')
+
+        if (testElement) {
+            assert.notOk(_.isFunction(testElement), '元素不是函数')
+        }
+
+        var nodeList = typeof document !== 'undefined' && document.childNodes
+        assert.notOk(_.isFunction(nodeList))
+    })
 })()

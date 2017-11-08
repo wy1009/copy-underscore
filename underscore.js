@@ -86,4 +86,9 @@
         // 借用Object原型上的函数，保证原型链上没有Object.prototype的变量也能使用该方法
         return Object.prototype.toString.call(obj) === '[object Array]'
     }
+
+    // 传入的变量是否为函数
+    _.isFunction = function (obj) {
+        return typeof obj === 'function'
+    }
 })()
