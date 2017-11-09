@@ -28,6 +28,7 @@
     }
 
     // *?*1 不知道为什么要这么写，姑且理解为是基于函数式编程“只传一个参数”的规定吧
+    // *!*1 写到后面意识到该问题的答案有可能是，防止object为空却取属性出错。
     // *?*1 也不知道为什么一定要把函数写成函数表达式而不是函数声明，导致函数表达式一定要放在函数调用的前面
     var shallowProperty = function (key) {
         return function (obj) {
@@ -93,7 +94,7 @@
         predicate = cb(predicate, context)
         // predicate为function () { return func.apply(context, arguments) }，完美保存下特定执行上下文的函数
         // 具体来说，闭包保存变量值，return一个执行函数保证设置特定执行上下文且函数当时还可以不执行
-        
+
         for (var i = 0; i < getLength(array); i ++) {
             if (predicate(array[i], i, array)) {
                 return i
