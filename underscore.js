@@ -22,6 +22,9 @@
         if (_.isFunction(val)) {
             return optimizCb(val, context)
         }
+        return function (obj) {
+            return deepGet(obj, val)
+        }
     }
 
     // *?*1 不知道为什么要这么写，姑且理解为是基于函数式编程“只传一个参数”的规定吧
