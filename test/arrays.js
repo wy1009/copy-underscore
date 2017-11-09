@@ -17,5 +17,11 @@
     
         // 以该测试用例为例，传入一个字符串，相当于检测数组，每项的'a'属性是否为true，为true则返回index
         assert.strictEqual(_.findIndex(objects, 'a'), 1)
+
+        assert.strictEqual(_.findIndex(objects, function (obj) {
+            return obj.a * obj.b === 5
+        }), -1)
+
+        assert.strictEqual(_.findIndex(null, function () {}), -1)
     })
 })()

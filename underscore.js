@@ -93,7 +93,8 @@
         predicate = cb(predicate, context)
         // predicate为function () { return func.apply(context, arguments) }，完美保存下特定执行上下文的函数
         // 具体来说，闭包保存变量值，return一个执行函数保证设置特定执行上下文且函数当时还可以不执行
-        for (var i = 0; i < array.length; i ++) {
+        
+        for (var i = 0; i < getLength(array); i ++) {
             if (predicate(array[i], i, array)) {
                 return i
             }
