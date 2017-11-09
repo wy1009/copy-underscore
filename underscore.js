@@ -64,7 +64,7 @@
         }
         var keys = []
         for (var key in obj) {
-            // 防止将原型中的方法和属性也推入到数组
+            // 防止将原型中的自定义属性和方法也推入到数组
             if (_.has(obj, key)) {
                 keys.push(key)
             }
@@ -96,6 +96,17 @@
             }
         }
         return -1
+    }
+
+    var deepGet = function (obj, path) {
+        for (var i = 0; i < path.length; i ++) {
+            if (!obj) {
+                return void 0
+            }
+            obj = obj[path[i]]
+        }
+
+        return path.length ? obj : void 0
     }
 
     // 传入的变量是否是对象类型。函数、object、数组、DOM元素被视为对象类型。
