@@ -9,7 +9,19 @@
 
     // 内部函数，对传入的callback返回一个优化版本，以被underscore的其他函数重复接受
     var optimizCb = function (func, context) {
-        
+        if (context === void 0) {
+            return func
+        }
+
+        return function () {
+            return func.apply(context, arguments)
+        }
+    }
+
+    var cb = function (val, context) {
+        if (_.isFunction(val)) {
+            return optimizCb(val, context)
+        }
     }
 
     // *?*1 不知道为什么要这么写，姑且理解为是基于函数式编程“只传一个参数”的规定吧
@@ -72,6 +84,18 @@
             obj = obj[path[i]]
         }
         return !!path.length
+    }
+
+    _.findIndex = function (array, predicate, context) {
+        predicate = cb(predicate, context)
+        // predicate为function () { return func.apply(context, arguments) }，完美保存下特定执行上下文的函数
+        // 具体来说，闭包保存变量值，return一个执行函数保证设置特定执行上下文且函数当时还可以不执行
+        for (var i = 0; i < array.length; i ++) {
+            if (predicate(array[i], i, array)) {
+                return i
+            }
+        }
+        return -1
     }
 
     // 传入的变量是否是对象类型。函数、object、数组、DOM元素被视为对象类型。
