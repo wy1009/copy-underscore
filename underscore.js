@@ -17,13 +17,12 @@
         }
     }
 
+    // 返回统一的callback函数
     var cb = function (val, context) {
         if (_.isFunction(val)) {
             return optimizCb(val, context)
         }
-        return function (obj) {
-            return deepGet(obj, val)
-        }
+        return _.property(val)
     }
 
     // *?*1 不知道为什么要这么写，姑且理解为是基于函数式编程“只传一个参数”的规定吧
@@ -122,6 +121,16 @@
             obj = obj[path[i]]
         }
         return path.length ? obj : void 0
+    }
+
+    // 参数path，返回一个可以输入obj返回path（字符串或数组）属性值的函数
+    _.property = function (path) {
+        if (!_.isArray(path)) {
+           return shallowProperty(path)
+        }
+        return function (obj) {
+            return deepGet(obj, path)
+        }
     }
 
     // 传入的变量是否是对象类型。函数、object、数组、DOM元素被视为对象类型。
