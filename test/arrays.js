@@ -40,5 +40,9 @@
         assert.strictEqual(_.findIndex(arr, function (obj) {
             return obj === 55
         }), -1)
+
+        _.findIndex(document.childNodes, function (node) {
+            return typeof node === 'object'
+        }, '对array-like生效')
     })
 })()

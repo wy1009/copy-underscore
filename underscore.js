@@ -12,7 +12,6 @@
         if (context === void 0) {
             return func
         }
-
         return function () {
             return func.apply(context, arguments)
         }
@@ -59,6 +58,7 @@
         }
     }
 
+    // 取出对象自有属性的名字
     _.keys = function (obj) {
         if (!_.isObject(obj)) {
             return []
@@ -77,6 +77,7 @@
         return keys
     }
 
+    // 检查一个对象中是否直接在它本身有某个属性，换句话说，不是原型属性
     _.has = function (obj, path) {
         if (!_.isArray(path)) {
             return !!obj && Object.prototype.hasOwnProperty.call(obj, path)
@@ -90,11 +91,11 @@
         return !!path.length
     }
 
+    // 返回array-like中通过断言测试的第一个值的index
     _.findIndex = function (array, predicate, context) {
         predicate = cb(predicate, context)
         // predicate为function () { return func.apply(context, arguments) }，完美保存下特定执行上下文的函数
         // 具体来说，闭包保存变量值，return一个执行函数保证设置特定执行上下文且函数当时还可以不执行
-
         for (var i = 0; i < getLength(array); i ++) {
             if (predicate(array[i], i, array)) {
                 return i
@@ -103,6 +104,7 @@
         return -1
     }
 
+    // 取出对象所有自有属性的值，依赖_.keys，所以取出的是自有属性，不包括原型属性
     _.values = function (obj) {
         var keys = _.keys(obj)
         var values = []
@@ -119,7 +121,6 @@
             }
             obj = obj[path[i]]
         }
-
         return path.length ? obj : void 0
     }
 

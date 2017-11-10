@@ -69,12 +69,10 @@
         assert.ok(_.isFunction(_.isFunction), '函数是函数')
         assert.ok(_.isFunction(function () {}), '匿名函数是函数')
 
-        if (testElement) {
-            assert.notOk(_.isFunction(testElement), '元素不是函数')
-        }
+        testElement && assert.notOk(_.isFunction(testElement), '元素不是函数')
 
         var nodeList = typeof document !== 'undefined' && document.childNodes
-        assert.notOk(_.isFunction(nodeList))
+        nodeList && assert.notOk(_.isFunction(nodeList))
     })
 
     QUnit.test('valus', function (assert) {
