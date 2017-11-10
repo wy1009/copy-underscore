@@ -79,4 +79,17 @@
         assert.deepEqual(_.values({ one: 1, two: 2 }), [1, 2])
         assert.deepEqual(_.values({ one: 1, two: 2, length: 3 }), [1, 2, 3])
     })
+
+    QUnit.test('property', function (assert) {
+        var stooge = { name: 'moe' }
+        assert.strictEqual(_.property('name')(stooge), 'moe', '应返回给出名字的属性')
+        assert.strictEqual(_.property('name')(null), void 0, '应为null对象的name属性返回undefined')
+        assert.strictEqual(_.property('name')(void 0), void 0, '应为undefined对象的name属性返回undefined')
+        assert.strictEqual(_.property(null)(stooge), void 0, '应为stooge对象的null属性返回undefined') // stooge[null] === undefined
+        assert.strictEqual(_.property('x')({ x: null }), null, '可以返回null属性值')
+        assert.strictEqual(_.property(['a', 'b'])({ a: { b: 2 } }), 2, '可以获取嵌套属性')
+        assert.strictEqual(_.property(['a'])({ a: false }), false, '可以获取false值')
+        assert.strictEqual(_.property(['a', 'b'])({ a: { b: null } }), null, '可以获取嵌套属性的null值')
+        assert.strictEqual(_.property([])({ x: 'y' }), void 0, '获取路径为空数组时返回undefined')
+    })
 })()
