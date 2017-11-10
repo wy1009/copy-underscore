@@ -81,11 +81,16 @@
     })
 
     QUnit.test('property', function (assert) {
-        var stooge = { name: 'moe' }
+        var stooge = {
+            name: 'moe',
+            null: 'nullVal',
+            undefined: 'undefinedVal'
+        }
         assert.strictEqual(_.property('name')(stooge), 'moe', '应返回给出名字的属性')
         assert.strictEqual(_.property('name')(null), void 0, '应为null对象的name属性返回undefined')
         assert.strictEqual(_.property('name')(void 0), void 0, '应为undefined对象的name属性返回undefined')
-        assert.strictEqual(_.property(null)(stooge), void 0, '应为stooge对象的null属性返回undefined') // stooge[null] === undefined
+        // 原例默认stooge[null] === undefined，可是null也能作为属性名（会被处理为字符串，即stooge[null] === stooge['null']）
+        assert.strictEqual(_.property(null)(stooge), 'nullVal', '应为stooge对象的null属性返回undefined')
         assert.strictEqual(_.property('x')({ x: null }), null, '可以返回null属性值')
         assert.strictEqual(_.property(['a', 'b'])({ a: { b: 2 } }), 2, '可以获取嵌套属性')
         assert.strictEqual(_.property(['a'])({ a: false }), false, '可以获取false值')
