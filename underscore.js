@@ -19,9 +19,20 @@
 
     // 返回统一的callback函数
     var cb = function (val, context) {
+        // 传入值本身就是一个函数，返回一个执行上下文为context的该函数
         if (_.isFunction(val)) {
             return optimizCb(val, context)
         }
+        // 传入值为空，返回一个传入什么就返回什么的函数
+        // 这是为了统一，不传函数和传函数可以一样处理
+        // 原例为val == null，即undefined和null都能判定为true
+        // 考虑到传入null（虽然一般不会这样做），不会是想要作为对象的取值路径处理（即最后一步），因此这样处理
+        // 但其实，undefined和null被放入最后一步作为对象取值路径处理也不会出错，也可以被作为属性名，被处理为字符串
+        // 即obj[null] === obj['null']
+        if (val === undefined || val === null) {
+            return _.identify
+        }
+        // 传入值不是以上任何类型，当做对象的取值路径处理，返回一个可以传入对象，返回按照该路径取的值的函数
         return _.property(val)
     }
 
@@ -131,6 +142,10 @@
         return function (obj) {
             return deepGet(obj, path)
         }
+    }
+
+    _.identify = function (val) {
+        return val
     }
 
     // 传入的变量是否是对象类型。函数、object、数组、DOM元素被视为对象类型。
