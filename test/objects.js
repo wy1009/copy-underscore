@@ -76,4 +76,9 @@
         var nodeList = typeof document !== 'undefined' && document.childNodes
         assert.notOk(_.isFunction(nodeList))
     })
+
+    QUnit.test('valus', function (assert) {
+        assert.deepEqual(_.values({ one: 1, two: 2 }), [1, 2])
+        assert.deepEqual(_.values({ one: 1, two: 2, length: 3 }), [1, 2, 3])
+    })
 })()

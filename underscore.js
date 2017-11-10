@@ -103,6 +103,15 @@
         return -1
     }
 
+    _.values = function (obj) {
+        var keys = _.keys(obj)
+        var values = []
+        for (var i = 0; i < keys.length; i ++) {
+            values.push(obj[keys[i]])
+        }
+        return values
+    }
+
     var deepGet = function (obj, path) {
         for (var i = 0; i < path.length; i ++) {
             if (!obj) {
