@@ -127,4 +127,37 @@
         result = _.extendOwn({ a: 1, 0: 2, 1: '5', length: 6 }, { 0: 1, 1: 2, length: 2 })
         assert.deepEqual(result, { a: 1, 0: 1, 1: 2, length: 2 }, '处理类数组对象应像普通对象一样')
     })
+
+    QUnit.test('isMatch', function (assert) {
+        var moe = { name: 'Moe Howard', hair: true },
+            curly = { name: 'Curly Howard', hair: false }
+        assert.strictEqual(_.isMatch(moe, { hair: true }), true)
+        assert.strictEqual(_.isMatch(curly, { hair: true }), false)
+        assert.strictEqual(_.isMatch(5, { __x__: void 0 }), false, '可以在原始类型上匹配undefined属性值')
+        assert.strictEqual(_.isMatch({ __x__: void 0 }, { __x__: void 0 }), true, '可以匹配undefined属性值')
+        assert.strictEqual(_.isMatch(null, {}), true)
+        assert.strictEqual(_.isMatch(null, { a: 1 }), false)
+
+        _.each([null, void 0], function (item) {
+            assert.strictEqual(_.isMatch(item, null), true, 'null匹配null')
+        })
+        _.each([null, void 0], function (item) {
+            assert.strictEqual(_.isMatch(item, {}), true, '{}匹配null')
+        })
+        assert.strictEqual(_.isMatch({ b: 1 }, { a: void 0 }), false)
+        _.each([true, 5, NaN, null, void 0], function (item) {
+            assert.strictEqual(_.isMatch({ a: 1 }, item), true, '将原始值当做空来处理')
+        })
+
+        function F () {}
+        F.prototype.x = 1
+        var subObj = new F()
+        assert.strictEqual(_.isMatch({ x: 2 }, subObj), true, '需要查找的对象，其属性不包括原型属性')
+        subObj.y = 5
+        assert.strictEqual(_.isMatch({ x: 1, y: 5 }, subObj), true)
+        assert.strictEqual(_.isMatch({ x: 1, y: 4 }, subObj), false)
+        assert.ok(_.isMatch(subObj, { x: 1, y: 5 }), true, '但是被检测的对象，被检测属性包括原型属性')
+        F.x = 5
+        assert.ok(_.isMatch({ x: 5, y: 1 }, F), '需要查找的对象可以是一个函数')
+    })
 })()

@@ -148,6 +148,7 @@
         return val
     }
 
+    // 相当于一个对对象的浅复制
     _.extendOwn = function (obj) {
         var argLength = arguments.length
         // 如果是字符串等不会被!obj拦下的原始类型变量，会正常走for循环，赋值时形成临时对象，然后销毁，返回的仍旧是原变量
@@ -163,6 +164,24 @@
             }
         }
         return obj
+    }
+
+    _.isMatch = function (obj, attrs) {
+        var keys = _.keys(attrs),
+            length = keys.length
+        if (!obj) {
+            return !length
+        }
+        obj = Object(obj) // 第一次看到强制类型转换为对象的
+        for (var i = 0; i < length; i ++) {
+            var key = keys[i]
+            // 判断key in obj，防止两个值都是undefined，如_.isMatch({}, { x: void 0 })，不判断则返回true
+            // keys取对象属性不包括原型属性，但取值和in操作符都包括原型属性。因此，需要查找的对象不包括原型属性，但是被检查的对象会被检查原型属性
+            if (attrs[key] !== obj[key] || !(key in obj)) {
+                return false
+            }
+        }
+        return true
     }
 
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
