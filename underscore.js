@@ -148,7 +148,24 @@
         return val
     }
 
-    // 传入的变量是否是对象类型。函数、object、数组、DOM元素被视为对象类型。
+    _.extendOwn = function (obj) {
+        var argLength = arguments.length
+        // 如果是字符串等不会被!obj拦下的原始类型变量，会正常走for循环，赋值时形成临时对象，然后销毁，返回的仍旧是原变量
+        // 为了严谨，自己加了一个object类型判断
+        if (argLength < 2 || !obj || typeof obj !== 'object') {
+            return obj
+        }
+        for (var argI = 1; argI < argLength; argI ++) {
+            var source = arguments[argI],
+                keys = _.keys(source)
+            for (var i = 0; i < keys.length; i ++) {
+                obj[keys[i]] = source[keys[i]]
+            }
+        }
+        return obj
+    }
+
+    // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {
         var type = typeof obj
         // typeof null为object，不会继续判断，因此type === 'function'与type === 'object'顺序不能颠倒
