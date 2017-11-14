@@ -166,6 +166,7 @@
         return obj
     }
 
+    // 查找一个对象的所有属性是否都与另一个对象相同。待查找对象不包括原型属性，被检测对象包括原型属性。
     _.isMatch = function (obj, attrs) {
         var keys = _.keys(attrs),
             length = keys.length
@@ -182,6 +183,19 @@
             }
         }
         return true
+    }
+
+    // 将传入的array/object逐项处理，返回处理后的value数组
+    _.map = _.collect = function (obj, iteratee, context) {
+        iteratee = cb(iteratee, context)
+        var keys = !isArrayLike(obj) && _.keys(obj),
+            length = (keys || obj).length,
+            results = []
+        for (var i = 0; i < length; i ++) {
+            var key = keys ? keys[i] : i
+            results.push(iteratee(obj[key], key, obj))
+        }
+        return results
     }
 
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
