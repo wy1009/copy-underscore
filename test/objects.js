@@ -1,4 +1,4 @@
-(function () {
+;(function () {
     var testElement = typeof document === 'object' ? document.createElement('div') : void 0
 
     QUnit.test('keys', function (assert) {

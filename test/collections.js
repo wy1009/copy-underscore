@@ -1,4 +1,4 @@
-(function () {
+;(function () {
     QUnit.test('map', function (assert) {
         var doubled = _.map([1, 2, 3], function (num) {
             return num * 2

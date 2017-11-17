@@ -24,7 +24,7 @@
             return optimizCb(val, context)
         }
         // 传入值为空，返回一个传入什么就返回什么的函数
-        // 这是为了统一，不传函数和传函数可以一样处理
+        // 这是为了统一，在调用cb之后，不管是否实际传入了处理数据的函数，都可以统一当做函数处理
         // 原例为val == null，即undefined和null都能判定为true
         // 考虑到传入null（虽然一般不会这样做），不会是想要作为对象的取值路径处理（即最后一步），因此这样处理
         // 但其实，undefined和null被放入最后一步作为对象取值路径处理也不会出错，也可以被作为属性名，被处理为字符串
@@ -34,6 +34,21 @@
         }
         // 传入值不是以上任何类型，当做对象的取值路径处理，返回一个可以传入对象，返回按照该路径取的值的函数
         return _.property(val)
+    }
+
+    // 注释说是与es6中的rest parameters相同，但感觉原代码只是switch后的那部分的功能与rest parameters相同
+    // 前面的功能更像是根据这份代码本身的设计做出的特殊处理
+    // 总之目前暂时只用得到case为1的情况，就暂时先这么写，否则也不懂它为什么要这样处理
+    // 以后用到其他情况再做补充
+    var restArgs = function (func) {
+        return function () {
+            var rest = []
+            for (var i = 0; i < arguments.length - 1; i ++) {
+                rest[i] = arguments[i + 1]
+            }
+            // 原代码中这里有一个switch，case: 1的代码是如下的func.call
+            return func.call(this, arguments[0], rest)
+        }
     }
 
     // *?*1 不知道为什么要这么写，姑且理解为是基于函数式编程“只传一个参数”的规定吧
@@ -197,6 +212,20 @@
         }
         return results
     }
+
+    // 返回一个带着部分已固定的参数的函数
+    _.partial = restArgs(function (func, boundArgs) {
+        return function () {
+            var args = []
+            for (var i = 0; i < boundArgs.length; i ++) {
+                args[i] = boundArgs[i]
+            }
+            for (var i = 0; i < arguments.length; i ++) {
+                args.push(arguments[i])
+            }
+            return func.apply(this, args)
+        }
+    })
 
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {

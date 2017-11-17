@@ -1,4 +1,4 @@
-(function () {
+;(function () {
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },
