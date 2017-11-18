@@ -123,9 +123,9 @@
             assert.strictEqual(_.extendOwn(val, { a: 1 }), val, '如果是用非object继承，返回非object值')
         })
 
-        // 反正根据underscore的判断标准，只要有数字类型的length值的对象就是类数组对象
+        // 反正根据underscore的判断标准，只要有数字类型的length值的对象就是array-like对象
         result = _.extendOwn({ a: 1, 0: 2, 1: '5', length: 6 }, { 0: 1, 1: 2, length: 2 })
-        assert.deepEqual(result, { a: 1, 0: 1, 1: 2, length: 2 }, '处理类数组对象应像普通对象一样')
+        assert.deepEqual(result, { a: 1, 0: 1, 1: 2, length: 2 }, '处理array-like对象应像普通对象一样')
     })
 
     QUnit.test('isMatch', function (assert) {

@@ -227,6 +227,23 @@
         }
     })
 
+    // 安全创建一个数组
+    var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
+    _.toArray = function (obj) {
+        if (!obj) {
+            return []
+        }
+        if (_.isArray(obj)) {
+            return Array.prototype.slice.call(obj)
+        }
+        if (_.isString(obj)) {
+            return obj.match(reStrSymbol)
+        }
+        // 不知道原代码为什么要专门对array-like对象加一个_.map(obj, _.identify)的写法
+        // 不这样写同样可以通过所有的测试用例
+        return _.values(obj)
+    }
+
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {
         var type = typeof obj
@@ -244,4 +261,10 @@
     _.isFunction = function (obj) {
         return typeof obj === 'function'
     }
+
+    _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function (item) {
+        _['is' + item] = function (obj) {
+            return Object.prototype.toString.call(obj) === '[object ' + item + ']'
+        }
+    })
 })()
