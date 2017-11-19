@@ -213,19 +213,24 @@
         return results
     }
 
-    // 返回一个带着部分已固定的参数的函数
+    // 返回一个带着部分已固定的参数的函数，这部分固定的参数可以用placeholder占位
     _.partial = restArgs(function (func, boundArgs) {
+        var placeholder = _.partial.placeholder
         return function () {
-            var args = []
+            var args = [],
+                position = 0
             for (var i = 0; i < boundArgs.length; i ++) {
-                args[i] = boundArgs[i]
+                args[i] = boundArgs[i] === placeholder ? arguments[position ++] : boundArgs[i]
             }
-            for (var i = 0; i < arguments.length; i ++) {
+            for (var i = position; i < arguments.length; i ++) {
                 args.push(arguments[i])
             }
+            // 被apply进去的参数数组，undefined会变成字符串
             return func.apply(this, args)
         }
     })
+
+    _.partial.placeholder = _
 
     // 安全创建一个数组
     var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
