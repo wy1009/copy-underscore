@@ -41,7 +41,7 @@
 
         _.partial.placeholder = {}
         func = _.partial(function () {
-            return arguments
+            return arguments.length
         }, obj, 'b', obj, 'd')
         asserts.strictEqual(func('a'), 5)
 
