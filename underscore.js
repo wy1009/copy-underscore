@@ -51,6 +51,21 @@
         }
     }
 
+    // 创建一个构造函数为既定prototype的实例
+    var Ctor = function () {}
+    var baseCreate = function (prototype) {
+        if (!_.isObject(prototype)) {
+            return
+        }
+        if (Object.create) {
+            return Object.create(prototype)
+        }
+        Ctor.prototype = prototype
+        var result = new Ctor()
+        Ctor.prototype = null
+        return result
+    }
+
     // *?*1 不知道为什么要这么写，姑且理解为是基于函数式编程“只传一个参数”的规定吧
     // *!*1 写到后面意识到该问题的答案有可能是，防止object为空却取属性出错。
     // *?*1 也不知道为什么一定要把函数写成函数表达式而不是函数声明，导致函数表达式一定要放在函数调用的前面
@@ -213,10 +228,28 @@
         return results
     }
 
+    var executeBound = function (sourceFn, boundFn, callingContext, args) {
+        // 普通地调用，而不是被作为构造函数调用（一般只有在构造函数中，this指向的对象才是函数的实例）
+        if (!(callingContext instanceof boundFn)) {
+            // 被apply进去的参数数组，undefined会变成字符串
+            return sourceFn.apply(callingContext, args)
+        }
+        // callingContext的指向是boundFn的实例，说明此时boundFn正被作为构造函数使用
+        // 此时boundFn的返回值就变得没有意义（一般是无返回值）
+        // 此时则模拟new的步骤，创建一个有sourceFn原型的对象，然后执行构造函数
+        // 该构造函数是boundFn，但是boundFn在意义上只是被处理过的sourceFn，即做出处理后return sourceFn执行的函数
+        // 因此，我们希望创造出的实例，指向的prototype是sourceFn的prototype，执行的构造函数代码是sourceFn的代码
+        // 也就是以下两步
+        // 最终返回这个实例
+        var self = baseCreate(sourceFn.prototype)
+        sourceFn.apply(self, args)
+        return self
+    }
+
     // 返回一个带着部分已固定的参数的函数，这部分固定的参数可以用placeholder占位
     _.partial = restArgs(function (func, boundArgs) {
         var placeholder = _.partial.placeholder
-        return function () {
+        var bound = function () {
             var args = [],
                 position = 0
             for (var i = 0; i < boundArgs.length; i ++) {
@@ -225,9 +258,9 @@
             for (var i = position; i < arguments.length; i ++) {
                 args.push(arguments[i])
             }
-            // 被apply进去的参数数组，undefined会变成字符串
-            return func.apply(this, args)
+            return executeBound(func, bound, this, args)
         }
+        return bound
     })
 
     _.partial.placeholder = _
