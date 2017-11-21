@@ -46,4 +46,30 @@
             return typeof node === 'object'
         }, '对array-like生效')
     })
+
+    QUnit.test('sortedIndex', function (assert) {
+        var numbers = [10, 20, 30, 40, 50]
+        assert.strictEqual(_.sortedIndex(numbers, 35), 3)
+        assert.strictEqual(_.sortedIndex(numbers, 30), 2)
+
+        var objects = [{ x: 10 }, { x: 20 }, { x: 30 }, { x: 40 }]
+        assert.strictEqual(_.sortedIndex(objects, { x: 25 }, function (item) {
+            return item.x
+        }), 2)
+        assert.strictEqual(_.sortedIndex(objects, { x: 35 }, 'x'), 3)
+
+        var context = { 1: 2, 2: 3, 3: 4 }
+        assert.strictEqual(_.sortedIndex([1, 3], 2, function (obj) {
+            return this[obj]
+        }, context), 1)
+
+        var values = [0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191, 16383, 32767, 65535, 131071, 262143, 524287,
+            1048575, 2097151, 4194303, 8388607, 16777215, 33554431, 67108863, 134217727, 268435455, 536870911, 1073741823, 2147483647],
+            largeArray = Array(Math.pow(2, 32) - 1),
+            length = values.length
+        while (length --) {
+            largeArray[values[length]] = values[length]
+        }
+        assert.strictEqual(_.sortedIndex(largeArray, 2147483648), 2147483648)
+    })
 })()

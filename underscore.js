@@ -282,6 +282,23 @@
         return _.values(obj)
     }
 
+    // 二分法查找能插入值的最小index
+    _.sortedIndex = function (array, obj, iteratee, context) {
+        iteratee = cb(iteratee, context)
+        var value = iteratee(obj)
+        var low = 0,
+            high = getLength(array)
+        while (low < high) {
+            var mid = Math.floor((low + high) / 2)
+            if (iteratee(array[mid]) < value) {
+                low = mid + 1
+            } else {
+                high = mid
+            }
+        }
+        return low
+    }
+
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {
         var type = typeof obj
