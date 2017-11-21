@@ -159,5 +159,11 @@
         assert.ok(_.isMatch(subObj, { x: 1, y: 5 }), true, '但是被检测的对象，被检测属性包括原型属性')
         F.x = 5
         assert.ok(_.isMatch({ x: 5, y: 1 }, F), '需要查找的对象可以是一个函数')
+
+        // null的边界测试。能够通过测试主要是因为isMatch里指明如果被测试值为空且测试值不为空，返回false
+        var oCon = {
+            constructor: Object
+        }
+        assert.deepEqual(_.map([null, void 0, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true])
     })
 })()
