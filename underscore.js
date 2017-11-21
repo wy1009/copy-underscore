@@ -131,18 +131,24 @@
         return !!path.length
     }
 
-    // 返回array-like中通过断言测试的第一个值的index
-    _.findIndex = function (array, predicate, context) {
-        predicate = cb(predicate, context)
-        // predicate为function () { return func.apply(context, arguments) }，完美保存下特定执行上下文的函数
-        // 具体来说，闭包保存变量值，return一个执行函数保证设置特定执行上下文且函数当时还可以不执行
-        for (var i = 0; i < getLength(array); i ++) {
-            if (predicate(array[i], i, array)) {
-                return i
+    var createPredicateIndexFinder = function (dir) {
+        return function (array, predicate, context) {
+            predicate = cb(predicate, context)
+            var length = getLength(array)
+            for (var i = dir > 0 ? 0 : length - 1; i >= 0 && i < length; i += dir) {
+                if (predicate(array[i], i, array)) {
+                    return i
+                }
             }
+            return -1
         }
-        return -1
     }
+
+    // 返回array-like中通过断言测试的第一个值的index
+    _.findIndex = createPredicateIndexFinder(1)
+
+    // 返回array-like中通过断言测试的最后一个index
+    _.findLastIndex = createPredicateIndexFinder(-1)
 
     // 取出对象所有自有属性的值，依赖_.keys，所以取出的是自有属性，不包括原型属性
     _.values = function (obj) {
@@ -315,6 +321,11 @@
     // 传入的变量是否为函数
     _.isFunction = function (obj) {
         return typeof obj === 'function'
+    }
+
+    // 传入的变量是否是NaN
+    _.isNaN = function (obj) {
+        return _.isNumber(obj) && isNaN(obj)
     }
 
     _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function (item) {
