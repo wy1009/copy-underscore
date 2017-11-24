@@ -120,4 +120,41 @@
         }
         assert.strictEqual(_.sortedIndex(largeArray, 2147483648), 2147483648)
     })
+
+    QUnit.test('indexOf', function (assert) {
+        var numbers = [1, 2, 3]
+        assert.strictEqual(_.indexOf(numbers, 2), 1, '可以计算indexOf')
+
+        var result = (function () {
+            return _.indexOf(arguments, 2)
+        })(1, 2, 3)
+        assert.strictEqual(result, 1, '对arguments可行')
+
+        _.each([null, void 0, [], false], function (val) {
+            var msg = 'Handles: ' + (_.isArray(val) ? '[]' : val)
+            assert.strictEqual(_.indexOf(val, 2), -1, msg)
+            assert.strictEqual(_.indexOf(val, 2, -1), -1, msg)
+            assert.strictEqual(_.indexOf(val, 2, -20), -1, msg)
+            assert.strictEqual(_.indexOf(val, 2, 15), -1, msg)
+        })
+
+        numbers = [10, 20, 30, 40, 50]
+        assert.strictEqual(_.indexOf(numbers, 35, true), -1, '35不在列表中')
+        assert.strictEqual(_.indexOf(numbers, 40, true), 3, '40在列表中')
+
+        assert.strictEqual(_.indexOf([1, 2, 5, 4, 6, 7], 5, true), -1, '非有序数组传入true会导致查找错误');
+
+        numbers = [1, 2, 3, 1, 2, 3]
+        assert.strictEqual(_.indexOf(numbers, 2, 3), 4, '支持fromIndex参数')
+        assert.strictEqual(_.indexOf(numbers, 1, -3), 3, '支持从右边开始的fromIndex参数')
+        assert.strictEqual(_.indexOf(numbers, 1, -2), -1, '支持从右边开始的fromIndex参数')
+        assert.strictEqual(_.indexOf(numbers, 2, -3), 4)
+        _.each([-6, -8, -Infinity], function (fromIndex) {
+            assert.strictEqual(_.indexOf(numbers, 1, fromIndex), 0, fromIndex)
+        })
+
+        assert.strictEqual(_.indexOf([,,, 0], void 0), 0, '对待稀疏数组像稠密数组一样')
+        assert.strictEqual(_.indexOf([], void 0, true), -1, '空数组传入isSorted参数，返回-1')
+        
+    })
 })()

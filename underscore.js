@@ -305,6 +305,34 @@
         return low
     }
 
+    var createIndexFinder = function (dir, sortedIndex) {
+        return function (array, item, idx) {
+            var length = getLength(array)
+            if (typeof idx === 'boolean' && sortedIndex && length) {
+                var result = sortedIndex(array, item)
+                return array[result] === item ? result : -1
+            } else {
+                // 将idx替换为真正处于数组中的index
+                if (_.isNumber(idx)) {
+                    // 这里其实可能有|idx| > length的情况，根据原生indexOf和lastIndexOf的表现，决定不作处理
+                    // 原生表现就是超出部分正常处理，超出部分数组值为undefined
+                    idx = idx > 0 ? Math.min(idx, length) : Math.max(length + idx, 0)
+                } else {
+                    idx = dir > 0 ? 0 : length - 1
+                }
+            }
+            for (var i = idx; i < length && i >= 0; i += dir) {
+                if (array[i] === item) {
+                    return i
+                }
+            }
+            return -1
+        }
+    }
+
+    _.indexOf = createIndexFinder(1, _.sortedIndex)
+    _.lastIndexOf = createIndexFinder(-1)
+
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {
         var type = typeof obj
