@@ -155,6 +155,59 @@
 
         assert.strictEqual(_.indexOf([,,, 0], void 0), 0, '对待稀疏数组像稠密数组一样')
         assert.strictEqual(_.indexOf([], void 0, true), -1, '空数组传入isSorted参数，返回-1')
+    })
+
+    QUnit.test('lastIndexOf', function (assert) {
+        var numbers = [1, 0, 1]
+        assert.strictEqual(_.lastIndexOf(numbers, 1), 2)
+
+        numbers = [1, 0, 1, 0, 0, 1, 0, 0, 0]
+        numbers.lastIndexOf = null
+        assert.strictEqual(_.lastIndexOf(numbers, 1), 5, '可以计算lastIndexOf，即使没有原生方法')
+        assert.strictEqual(_.lastIndexOf(numbers, 0), 8)
+
+        var result = (function () {
+            return _.lastIndexOf(arguments, 1)
+        })(1, 0, 1, 0, 0, 1, 0, 0, 0)
+        assert.strictEqual(result, 5, '对arguments可行')
+
+        var falsy = [void 0, '', 0, false, NaN, null]
+        _.each(falsy, function (val) {
+            var msg = 'Handles: ' + (_.isArray(val) ? '[]' : val)
+            assert.strictEqual(_.lastIndexOf(val, 2), -1, msg)
+            assert.strictEqual(_.lastIndexOf(val, 2, -1), -1, msg)
+            assert.strictEqual(_.lastIndexOf(val, 2, -20), -1, msg)
+            assert.strictEqual(_.lastIndexOf(val, 2, 15), -1, msg)
+        })
+
+        numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        assert.strictEqual(_.lastIndexOf(numbers, 2, 2), 1, '支持fromIndex参数')
         
+        numbers = [1, 2, 3, 1, 2, 3]
+        assert.strictEqual(_.lastIndexOf(numbers, 1, 0), 0, 'fromIndex为0')
+        assert.strictEqual(_.lastIndexOf(numbers, 3), 5)
+        assert.strictEqual(_.lastIndexOf(numbers, 4), -1)
+        assert.strictEqual(_.lastIndexOf(numbers, 1, 2), 0)
+
+        _.each([6, 8, Math.pow(2, 32), Infinity], function (fromIndex) {
+            assert.strictEqual(_.lastIndexOf(numbers, void 0, fromIndex), -1)
+            assert.strictEqual(_.lastIndexOf(numbers, 1, fromIndex), 3)
+            assert.strictEqual(_.lastIndexOf(numbers, '', fromIndex), -1)
+        })
+
+        var expected = _.map(falsy, function (val) {
+            return typeof val === 'number' ? -1 : 5
+        })
+        var actual = _.map(falsy, function (fromIndex) {
+            return _.lastIndexOf(numbers, 3, fromIndex)
+        })
+        assert.deepEqual(actual, expected, '可以对待falsy的fromIndex')
+        assert.strictEqual(_.lastIndexOf(numbers, 3, '1'), -1, '原underscore无视数字字符串，我按照chrome表现处理为数字')
+        assert.strictEqual(_.lastIndexOf(numbers, 3, true), 5)
+        assert.strictEqual(_.lastIndexOf(numbers, 2, -3), 1)
+        assert.strictEqual(_.lastIndexOf(numbers, 1, -3), 3)
+        assert.deepEqual(_.map([-6, -8, -Infinity], function (fromIndex) {
+            return _.lastIndexOf(numbers, 1, fromIndex)
+        }), [0, -1, -1])
     })
 })()

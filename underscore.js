@@ -308,17 +308,24 @@
     var createIndexFinder = function (dir, sortedIndex) {
         return function (array, item, idx) {
             var length = getLength(array)
-            if (typeof idx === 'boolean' && sortedIndex && length) {
+            if (typeof idx === 'boolean' && idx && sortedIndex && length) {
                 var result = sortedIndex(array, item)
                 return array[result] === item ? result : -1
             } else {
+                // idx为数字或数字字符串
                 // 将idx替换为真正处于数组中的index
-                if (_.isNumber(idx)) {
-                    // 这里其实可能有|idx| > length的情况，根据原生indexOf和lastIndexOf的表现，决定不作处理
-                    // 原生表现就是超出部分正常处理，超出部分数组值为undefined
-                    idx = idx > 0 ? Math.min(idx, length) : Math.max(length + idx, 0)
+                if (_.isNumber(idx) || _.isString(idx) && idx && !_.isNaN(Number(idx))) {
+                    idx = Number(idx)
+                    // fromIndex本就比0小还从后向前查找，或fromIndex本来就比length - 1大还从前向后查找
+                    // 必然返回-1
+                    // 一开始处理方法为将index处理为-1或length，再走正常流程，但是这样会导致查找值为undefined时出现查找值，而不是-1
+                    // 因为arr[length]正是undefined
+                    if (dir < 0 && length + idx < 0 || dir > 0 && idx > length - 1) {
+                        return -1
+                    }
+                    idx = idx < 0 ? Math.max(length + idx, 0) : Math.min(idx, length - 1)
                 } else {
-                    idx = dir > 0 ? 0 : length - 1
+                    idx = dir < 0 ? length - 1 : 0
                 }
             }
             for (var i = idx; i < length && i >= 0; i += dir) {
