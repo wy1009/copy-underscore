@@ -349,6 +349,7 @@
     _.indexOf = createIndexFinder(1, _.sortedIndex)
     _.lastIndexOf = createIndexFinder(-1)
 
+    // 列表或对象中是否包含给定的值
     _.contains = _.includes = _.include = function (obj, item, fromIndex) {
         if (!isArrayLike(obj)) {
             obj = _.values(obj)
@@ -379,7 +380,7 @@
         return _.isNumber(obj) && isNaN(obj)
     }
 
-    _.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function (item) {
+    _.each(['Arguments', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function (item) {
         _['is' + item] = function (obj) {
             return Object.prototype.toString.call(obj) === '[object ' + item + ']'
         }
