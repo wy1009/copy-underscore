@@ -307,6 +307,7 @@
 
     var string2Num = function (obj) {
         // 若直接判断isNaN，''和null都会被Number转换为0，不符合预期
+        // 使用parseInt，则'123a' -> '123'，不符合预期
         if (_.isNumber(obj) || _.isString(obj) && obj && !_.isNaN(Number(obj))) {
             return Number(obj)
         }
@@ -347,6 +348,13 @@
 
     _.indexOf = createIndexFinder(1, _.sortedIndex)
     _.lastIndexOf = createIndexFinder(-1)
+
+    _.contains = _.includes = _.include = function (obj, item, fromIndex) {
+        if (!isArrayLike(obj)) {
+            obj = _.values(obj)
+        }
+        return _.indexOf(obj, item, fromIndex) >= 0
+    }
 
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {

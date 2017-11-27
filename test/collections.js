@@ -52,4 +52,30 @@
             assert.deepEqual(actual, _.map(document.childNodes, _.identify), '对NodeList有用')
         }
     })
+
+    QUnit.test('includes', function (assert) {
+        _.each([null, void 0, 0, 1, NaN, {}, []], function (val) {
+            assert.strictEqual(_.includes(val, 'hasOwnProperty'), false)
+        })
+        assert.strictEqual(_.includes([1, 2, 3], 2), true, '2在数组中')
+        assert.strictEqual(_.includes([1, 3, 9], 2), false, '2不在数组中')
+        assert.strictEqual(_.includes([5, 4, 3, 2, 1], 5, true), false, '使用二分法查找，要求数组正序')
+        assert.strictEqual(_.includes({ moe: 1, larry: 3, curly: 9 }, 3), true, '如果是object，只检查值')
+
+        var numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        assert.strictEqual(_.includes(numbers, 1, 1), true, 'fromIndex')
+        assert.strictEqual(_.includes(numbers, 1, -1), false, 'fromIndex')
+        assert.strictEqual(_.includes(numbers, 1, -2), false, 'fromIndex')
+        assert.strictEqual(_.includes(numbers, 1, -3), true, 'fromIndex')
+        assert.strictEqual(_.includes(numbers, 1, 6), true, 'fromIndex')
+        assert.strictEqual(_.includes(numbers, 1, 7), false, 'fromIndex')
+    })
+
+    QUnit.test('include', function (assert) {
+        assert.strictEqual(_.include, _.includes, '是includes的别名')
+    })
+
+    QUnit.test('contains', function (assert) {
+        assert.strictEqual(_.contains, _.includes, '是includes的别名')
+    })
 })()
