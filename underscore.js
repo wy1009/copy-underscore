@@ -98,6 +98,23 @@
         }
     }
 
+    // 用于处理IE<9的bug
+    var hasEnumBug = !{ toString: null }.propertyIsEnumerable('toString'),
+        nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocalString']
+    var collectNonEnumProps = function (obj, keys) {
+        var proto = _.isFunction(obj.constructor) && obj.constructor.prototype || Object.prototype
+        for (var i = 0; i < nonEnumerableProps.length; i ++) {
+            var prop = nonEnumerableProps[i]
+            // _.has只判断非原型属性是否存在，源码只有对constructor的单独处理是这样写的
+            // 怀疑对constructor单独处理的原因是{ constructor: 补充原constructor }的写法比较常见
+            // 由于是不同人写出的，怀疑只是不更改上一个人的写法，单单做缝补
+            // 真心觉得这个方法可以适应所有属性，就这么写了
+            if (_.has(obj, prop) && _.includes(keys, prop)) {
+                keys.push(props)
+            }
+        }
+    }
+
     // 取出对象自有属性的名字
     _.keys = function (obj) {
         if (!_.isObject(obj)) {
@@ -113,7 +130,7 @@
                 keys.push(key)
             }
         }
-        // 等待走解决<IE9的bug路线
+        if (hasEnumBug) collectNonEnumProps(obj, keys)
         return keys
     }
 
