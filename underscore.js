@@ -305,6 +305,13 @@
         return low
     }
 
+    var string2Num = function (obj) {
+        // 若直接判断isNaN，''和null都会被Number转换为0，不符合预期
+        if (_.isNumber(obj) || _.isString(obj) && obj && !_.isNaN(Number(obj))) {
+            return Number(obj)
+        }
+    }
+
     var createIndexFinder = function (dir, sortedIndex) {
         return function (array, item, idx) {
             var length = getLength(array)
@@ -314,8 +321,9 @@
             } else {
                 // idx为数字或数字字符串
                 // 将idx替换为真正处于数组中的index
-                if (_.isNumber(idx) || _.isString(idx) && idx && !_.isNaN(Number(idx))) {
-                    idx = Number(idx)
+                var num = string2Num(idx)
+                if (num !== void 0) {
+                    idx = num
                     // fromIndex本就比0小还从后向前查找，或fromIndex本来就比length - 1大还从前向后查找
                     // 必然返回-1
                     // 一开始处理方法为将index处理为-1或length，再走正常流程，但是这样会导致查找值为undefined时出现查找值，而不是-1
