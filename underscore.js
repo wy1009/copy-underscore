@@ -120,7 +120,7 @@
             if (!_.isObject(obj)) {
                 return []
             }
-            if (Object.keys) {
+            if (Object.keys && type !== 'all') {
                 return Object.keys(obj)
             }
             var keys = []
@@ -141,6 +141,7 @@
 
     // 取出对象自有属性的名字
     _.keys = createKeysCollector()
+    // 取出对象所有属性的名字，包括原型链上的可枚举属性
     _.allKeys = createKeysCollector('all')
 
     // 检查一个对象中是否直接在它本身有某个属性，换句话说，不是原型属性

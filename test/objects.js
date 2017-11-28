@@ -15,7 +15,7 @@
         var fn = function () {}
         fn.a = 'b'
         fn.b = 'c'
-        assert.deepEqual(_.keys(fn), ['a', 'b'])
+        assert.deepEqual(_.keys(fn), ['a', 'b'], '能够取得函数的key')
 
         var trouble = {
             constructor: Object,
@@ -32,7 +32,45 @@
         }
         var troubleKeys = ['constructor', 'valueOf', 'hasOwnProperty', 'toString', 'toLocaleString', 'propertyIsEnumerable', 'isPrototypeOf', '__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__'].sort()
         assert.deepEqual(_.keys(trouble).sort(), troubleKeys, '能够符合不可枚举属性')
+    })
 
+    QUnit.test('allKeys', function (assert) {
+        assert.deepEqual(_.allKeys({ one: 1, two: 2 }), ['one', 'two'], '可以从对象中提取出key')
+        var arr = []
+        arr[1] = 0
+        assert.deepEqual(_.allKeys(arr), ['1'], '不会被稀疏数组所愚弄')
+        assert.deepEqual(_.allKeys(null), [])
+        assert.deepEqual(_.allKeys(void 0), [])
+        assert.deepEqual(_.allKeys(1), [])
+        assert.deepEqual(_.allKeys('a'), [])
+        assert.deepEqual(_.allKeys(true), [])
+
+        var fn = function () {}
+        fn.a = 'b'
+        fn.b = 'c'
+        assert.deepEqual(_.allKeys(fn), ['a', 'b'], '能够取得函数的key')
+
+        var trouble = {
+            constructor: Object,
+            valueOf: function () {},
+            hasOwnProperty: null,
+            toString: 5,
+            toLocaleString: void 0,
+            propertyIsEnumerable: /a/,
+            isPrototypeOf: this,
+            __defineGetter__: Boolean,
+            __defineSetter__: {},
+            __lookupSetter__: false,
+            __lookupGetter__: []
+        }
+        var troubleKeys = ['constructor', 'valueOf', 'hasOwnProperty', 'toString', 'toLocaleString', 'propertyIsEnumerable', 'isPrototypeOf', '__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__'].sort()
+        assert.deepEqual(_.allKeys(trouble).sort(), troubleKeys, '能够符合不可枚举属性')
+
+        function A () {}
+        A.prototype.foo = 'foo'
+        var b = new A()
+        b.bar = 'bar'
+        assert.deepEqual(_.allKeys(b).sort(), ['bar', 'foo'], '应该包括继承的key')
     })
 
     QUnit.test('isObject', function (assert) {
