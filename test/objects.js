@@ -153,6 +153,38 @@
         assert.strictEqual(_.property([])({ x: 'y' }), void 0, '获取路径为空数组时返回undefined')
     })
 
+    QUnit.test('extend', function (assert) {
+        var result
+        assert.strictEqual(_.extend({}, { a: 'b' }).a, 'b')
+        assert.strictEqual(_.extend({ a: 'x' }, { a: 'b' }).a, 'b', '会被重写')
+        assert.strictEqual(_.extend({ x: 'x' }, { a: 'b' }).x, 'x', '原本没有在对象里的属性不会被重写')
+        result = _.extend({ x: 'x' }, { a: 'a' }, { b: 'b' })
+        assert.deepEqual(result, { x: 'x', a: 'a', b: 'b' }, '能够从多个源对象继承')
+        result = _.extend({ x: 'x' }, { a: 'a', x: 2 }, { a: 'b' })
+        assert.deepEqual(result, { x: 2, a: 'b' }, '继承多个源对象也是保留最后一个属性')
+        assert.deepEqual(_.extend({}, { a: void 0, b: null }), { a: void 0, b: null }, '可以复制undefined值')
+
+        var F = function () {}
+        F.prototype = { a: 'b' }
+        var subObj = new F()
+        subObj.c = 'd'
+        assert.deepEqual(_.extend({}, subObj), { a: 'b', c: 'd' }, '复制原型属性')
+        _.extend(subObj, {})
+        assert.notOk(subObj.hasOwnProperty('a'), 'extend方法不会将原型链上的属性放入自身属性')
+        
+        result = {}
+        // 此条其实依赖于_.keys中做出的_.isObject的判断
+        assert.deepEqual(_.extend(result, null, void 0, { a: 1 }), { a: 1 }, '不应在源对象为null或undefined时报错')
+
+        _.each(['a', 5, null, false, void 0], function (val) {
+            assert.strictEqual(_.extend(val, { a: 1 }), val, '如果是用非object继承，返回非object值')
+        })
+
+        // 反正根据underscore的判断标准，只要有数字类型的length值的对象就是array-like对象
+        result = _.extend({ a: 1, 0: 2, 1: '5', length: 6 }, { 0: 1, 1: 2, length: 2 })
+        assert.deepEqual(result, { a: 1, 0: 1, 1: 2, length: 2 }, '处理array-like对象应像普通对象一样')
+    })
+
     QUnit.test('extendOwn', function (assert) {
         var result
         assert.strictEqual(_.extendOwn({}, { a: 'b' }).a, 'b')

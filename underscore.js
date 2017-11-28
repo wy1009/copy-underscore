@@ -29,7 +29,7 @@
         // 考虑到传入null（虽然一般不会这样做），不会是想要作为对象的取值路径处理（即最后一步），因此这样处理
         // 但其实，undefined和null被放入最后一步作为对象取值路径处理也不会出错，也可以被作为属性名，被处理为字符串
         // 即obj[null] === obj['null']
-        if (val === undefined || val === null) {
+        if (val === void 0 || val === null) {
             return _.identify
         }
         // 传入值不是以上任何类型，当做对象的取值路径处理，返回一个可以传入对象，返回按照该路径取的值的函数
@@ -211,23 +211,29 @@
         return val
     }
 
-    // 相当于一个对对象的浅复制
-    _.extendOwn = function (obj) {
-        var argLength = arguments.length
-        // 如果是字符串等不会被!obj拦下的原始类型变量，会正常走for循环，赋值时形成临时对象，然后销毁，返回的仍旧是原变量
-        // 为了严谨，自己加了一个object类型判断
-        if (argLength < 2 || !obj || typeof obj !== 'object') {
+    var createAssigner = function (keysFunc) {
+        return function (obj) {
+            var length = arguments.length
+            if (length < 2 || obj === void 0 || obj === null) {
+                return obj
+            }
+            for (var argI = 1; argI < length; argI ++) {
+                var source = arguments[argI],
+                    keys = keysFunc(source)
+                for (var i = 0; i < keys.length; i ++) {
+                    obj[keys[i]] = source[keys[i]]
+                }
+            }
             return obj
         }
-        for (var argI = 1; argI < argLength; argI ++) {
-            var source = arguments[argI],
-                keys = _.keys(source)
-            for (var i = 0; i < keys.length; i ++) {
-                obj[keys[i]] = source[keys[i]]
-            }
-        }
-        return obj
     }
+
+    // _.extend(destination, *sources)，赋值source对象中的所有属性覆盖到destination对象上，返回destination对象
+    // 复制按顺序，如果有重复，后面的对象属性会覆盖前面的对象属性
+    // 包括继承而来的属性，即原型链上的可枚举属性
+    _.extend = createAssigner(_.allKeys)
+    // 只复制自己的属性覆盖到目标对象，不包括原型链上的可枚举属性
+    _.extendOwn = createAssigner(_.keys)
 
     // 查找一个对象的所有属性是否都与另一个对象相同。待查找对象不包括原型属性，被检测对象包括原型属性。
     _.isMatch = function (obj, attrs) {
