@@ -16,6 +16,23 @@
         fn.a = 'b'
         fn.b = 'c'
         assert.deepEqual(_.keys(fn), ['a', 'b'])
+
+        var trouble = {
+            constructor: Object,
+            valueOf: function () {},
+            hasOwnProperty: null,
+            toString: 5,
+            toLocaleString: void 0,
+            propertyIsEnumerable: /a/,
+            isPrototypeOf: this,
+            __defineGetter__: Boolean,
+            __defineSetter__: {},
+            __lookupSetter__: false,
+            __lookupGetter__: []
+        }
+        var troubleKeys = ['constructor', 'valueOf', 'hasOwnProperty', 'toString', 'toLocaleString', 'propertyIsEnumerable', 'isPrototypeOf', '__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__'].sort()
+        assert.deepEqual(_.keys(trouble).sort(), troubleKeys, '能够符合不可枚举属性')
+
     })
 
     QUnit.test('isObject', function (assert) {

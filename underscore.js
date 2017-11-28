@@ -115,24 +115,33 @@
         }
     }
 
-    // 取出对象自有属性的名字
-    _.keys = function (obj) {
-        if (!_.isObject(obj)) {
-            return []
-        }
-        if (Object.keys) {
-            return Object.keys(obj)
-        }
-        var keys = []
-        for (var key in obj) {
-            // 防止将原型中的自定义属性和方法也推入到数组
-            if (_.has(obj, key)) {
-                keys.push(key)
+    var createKeysCollector = function (type) {
+        return function (obj) {
+            if (!_.isObject(obj)) {
+                return []
             }
+            if (Object.keys) {
+                return Object.keys(obj)
+            }
+            var keys = []
+            for (var key in obj) {
+                if (type === 'all') {
+                    keys.push(key)
+                } else {
+                    // 防止将原型中的自定义属性和方法也推入到数组
+                    if (_.has(obj, key)) {
+                        keys.push(key)
+                    }
+                }
+            }
+            if (hasEnumBug) collectNonEnumProps(obj, keys)
+            return keys
         }
-        if (hasEnumBug) collectNonEnumProps(obj, keys)
-        return keys
     }
+
+    // 取出对象自有属性的名字
+    _.keys = createKeysCollector()
+    _.allKeys = createKeysCollector('all')
 
     // 检查一个对象中是否直接在它本身有某个属性，换句话说，不是原型属性
     _.has = function (obj, path) {
