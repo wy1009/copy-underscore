@@ -121,4 +121,8 @@
             assert.strictEqual(this, _, '执行上下文')
         }, _)
     })
+
+    QUnit.test('detect', function (assert) {
+        assert.strictEqual(_.detect, _.find, '是find的别名')
+    })
 })()
