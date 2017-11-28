@@ -254,6 +254,13 @@
         return true
     }
 
+    // 返回一个断言函数。这个函数传入obj参数，断定attrs中的所有值是否都与obj中的值是相符的。
+    _.matcher = _.matches = function (attrs) {
+        return function (obj) {
+            return _.isMatch(obj, attrs)
+        }
+    }
+
     // 将传入的array/object逐项处理，返回处理后的value数组
     _.map = _.collect = function (obj, iteratee, context) {
         iteratee = cb(iteratee, context)
