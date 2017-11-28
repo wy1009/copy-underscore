@@ -53,6 +53,28 @@
         }
     })
 
+    QUnit.test('every', function (assert) {
+        assert.ok(_.every([], _.identify), true, '空集合返回true')
+        assert.ok(_.every([true, true, true], _.identify), true, '每项都为true')
+        assert.notOk(_.every([true, false, true], _.identify), false, '一项为false')
+        assert.ok(_.every([0, 10, 28], function (num) {
+            return num % 2 === 0
+        }), true, '偶数')
+        assert.notOk(_.every([0, 11, 28], function (num) {
+            return num % 2 === 0
+        }), false, '一个奇数')
+        assert.strictEqual(_.every([1], _.identify), true)
+        assert.strictEqual(_.every([0], _.identify), false)
+        assert.notOk(_.every([void 0, void 0, void 0], _.identify), '对undefined适用')
+
+        var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }]
+        assert.notOk(_.every(list, { a: 1, b: 2 }), '可以传入对象')
+        assert.ok(_.every(list, 'a'), '可以传入字符串')
+        
+        list = [{ a: 1, b: 2 }, { a: 2, b: 2, c: true }]
+        assert.ok(_.every(list, { b: 2 }), '可以传入对象')
+    })
+
     QUnit.test('includes', function (assert) {
         _.each([null, void 0, 0, 1, NaN, {}, []], function (val) {
             assert.strictEqual(_.includes(val, 'hasOwnProperty'), false)

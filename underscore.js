@@ -251,6 +251,24 @@
         return results
     }
 
+    // 如果obj中所有元素都通过predicate真值检测就返回true
+    _.every = _.all = function (obj, predicate, context) {
+        predicate = cb(predicate, context)
+        if (Array.prototype.every) {
+            return Array.prototype.every.call(obj, predicate)
+        }
+        var keys = !isArrayLike(obj) && _.keys(obj),
+            length = (keys || obj).length
+
+        for (var i = 0; i < length; i ++) {
+            var currentKey = keys ? keys[i] : i
+            if (!predicate(obj[currentKey], currentKey, obj)) {
+                return false
+            }
+        }
+        return true
+    }
+
     var executeBound = function (sourceFn, boundFn, callingContext, args) {
         // 普通地调用，而不是被作为构造函数调用（一般只有在构造函数中，this指向的对象才是函数的实例）
         if (!(callingContext instanceof boundFn)) {
