@@ -78,4 +78,47 @@
     QUnit.test('contains', function (assert) {
         assert.strictEqual(_.contains, _.includes, '是includes的别名')
     })
+
+    QUnit.test('find', function (assert) {
+        var arr = [1, 2, 3, 4]
+        assert.strictEqual(_.find(arr, function (n) {
+            return n > 2
+        }), 3, '应该返回第一个找到的value')
+        assert.strictEqual(_.find(arr, function () {
+            return false
+        }), void 0, '如果没有找到value，应该返回undefined')
+        
+        arr.dontmatch = 55
+        assert.strictEqual(_.find(arr, function (n) {
+            return n === 55
+        }), void 0, '对array-like有效')
+
+        var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }, { a: 2, b: 4 }]
+        assert.deepEqual(_.find(list, { a: 1 }), { a: 1, b: 2 }, '可以被用作findWhere')
+        assert.deepEqual(_.find(list, { b: 4 }), { a: 1, b: 4 })
+        assert.strictEqual(_.find(list, { c: 1 }), void 0, '在没找到时返回undefined')
+        assert.strictEqual(_.find([], { c: 1 }), void 0, '在检索空列表时为undefined')
+
+        assert.strictEqual(_.find([1, 2, 3], function (n) {
+            return n * 2 === 4
+        }), 2, '找到2并停止循环')
+
+        var obj = {
+            a: { x: 1, z: 3 },
+            b: { x: 2, z: 2 },
+            c: { x: 3, z: 4 },
+            d: { x: 4, z: 1 }
+        }
+        assert.deepEqual(_.find(obj, { x: 2 }), { x: 2, z: 2 }, '对对象生效')
+        assert.deepEqual(_.find(obj, { x: 2, z: 1 }), void 0)
+        assert.deepEqual(_.find(obj, function (x) {
+            return x.x === 4
+        }), { x: 4, z: 1 })
+
+        _.find([{ a: 1 }], function (val, key, obj) {
+            assert.strictEqual(key, 0)
+            assert.deepEqual(val, { a: 1 })
+            assert.strictEqual(this, _, '执行上下文')
+        }, _)
+    })
 })()

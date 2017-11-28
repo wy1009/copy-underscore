@@ -247,6 +247,15 @@
         }
     }
 
+    // 返回对象或数组中第一个通过断言测试的value。
+    _.find = _.detect = function (obj, predicate, context) {
+        var finder = isArrayLike(obj) ? _.findIndex : _.findKey
+        var key = finder(obj, predicate, context)
+        if (key !== -1 && key !== void 0) {
+            return obj[key]
+        }
+    }
+
     // 查找一个对象的所有属性是否都与另一个对象相同。待查找对象不包括原型属性，被检测对象包括原型属性。
     _.isMatch = function (obj, attrs) {
         var keys = _.keys(attrs),
