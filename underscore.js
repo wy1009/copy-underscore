@@ -235,6 +235,18 @@
     // 只复制自己的属性覆盖到目标对象，不包括原型链上的可枚举属性
     _.extendOwn = createAssigner(_.keys)
 
+    // 返回对象中第一个通过断言测试的key
+    _.findKey = function (obj, predicate, context) {
+        predicate = cb(predicate, context)
+        var keys = _.keys(obj)
+        for (var i = 0; i < keys.length; i ++) {
+            var key = keys[i]
+            if (predicate(obj[key], key, obj)) {
+                return key
+            }
+        }
+    }
+
     // 查找一个对象的所有属性是否都与另一个对象相同。待查找对象不包括原型属性，被检测对象包括原型属性。
     _.isMatch = function (obj, attrs) {
         var keys = _.keys(attrs),

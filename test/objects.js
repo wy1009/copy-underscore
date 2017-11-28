@@ -253,4 +253,39 @@
         }
         assert.deepEqual(_.map([null, void 0, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true])
     })
+
+    QUnit.test('findKey', function (assert) {
+        var objs = {
+            a: { a: 0, b: 0 },
+            b: { a: 1, b: 1 },
+            c: { a: 2, b: 2 }
+        }
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.a === 0
+        }), 'a')
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.b * obj.a === 4
+        }), 'c')
+        assert.strictEqual(_.findKey(objs, 'a'), 'b')
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.b * obj.a === 5
+        }), void 0)
+        assert.strictEqual(_.findKey([1, 2, 3, 4, 5, 6], function (obj) {
+            return obj === 3
+        }), '2', '对array生效')
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.foo === null
+        }), void 0)
+        _.findKey({ a: { a: 1 } }, function (val, key, obj) {
+            assert.strictEqual(key, 'a')
+            assert.deepEqual(obj, { a: { a: 1 } })
+            assert.strictEqual(this, objs, '执行上下文')
+        }, objs)
+
+        var arr = [1, 2, 3]
+        arr.match = 55
+        assert.strictEqual(_.findKey(arr, function (x) {
+            return x === 55
+        }), 'match', '匹配array-like的key') // arr -> [ 0: 1, 1: 2, 2: 3, match: 55, length: 3 ]
+    })
 })()
