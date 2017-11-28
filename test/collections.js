@@ -125,4 +125,21 @@
     QUnit.test('detect', function (assert) {
         assert.strictEqual(_.detect, _.find, '是find的别名')
     })
+
+    QUnit.test('filter', function (assert) {
+        var arr = [1, 2, 3, 4, 5, 6],
+            obj = { one: 1, two: 2, three: 3 },
+            isEven = function (num) {
+                return num % 2 === 0
+            }
+        assert.deepEqual(_.filter(arr, isEven), [2, 4, 6])
+        assert.deepEqual(_.filter(obj, isEven), [2], '能够过滤对象')
+        assert.deepEqual(_.filter([{}, obj, []], 'two'), [obj], '断言字符串，连接至object的属性')
+        _.filter([1], function () {
+            assert.strictEqual(this, obj, '执行上下文')
+        }, obj)
+
+        var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }]
+        // assert.deepEqual(_.filter(list, { a: 1 }), [])
+    })
 })()
