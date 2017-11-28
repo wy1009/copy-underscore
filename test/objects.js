@@ -253,4 +253,17 @@
         }
         assert.deepEqual(_.map([null, void 0, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true])
     })
+
+    QUnit.test('matcher', function (assert) {
+        var moe = { name: 'Moe Howard', hair: true },
+            curly = { name: 'Curly Howard', hair: false },
+            stooges = [moe, curly]
+        assert.strictEqual(_.matcher({ hair: true })(moe), true, '返回一个布尔值')
+        assert.strictEqual(_.matcher({ hair: true })(curly), false, '返回一个布尔值')
+
+        assert.strictEqual(_.matcher({ __x__: void 0 })(5), false, '可以匹配在基本类型未定义的属性值')
+        assert.strictEqual(_.matcher({ __x__: void 0 })({ __x__: void 0 }), true, '可以匹配未定义的属性值')
+        assert.strictEqual(_.matcher({})(null), true, '空规则对空对象返回true')
+        assert.strictEqual(_.matcher({ a: 1 })(null), false, '空规则对非空对象返回false')
+    })
 })()
