@@ -280,6 +280,7 @@
 
     // 返回一个断言函数。这个函数传入obj参数，断定attrs中的所有值是否都与obj中的值是相符的。
     _.matcher = _.matches = function (attrs) {
+        attrs = _.extendOwn({}, attrs)
         return function (obj) {
             return _.isMatch(obj, attrs)
         }
@@ -423,7 +424,7 @@
 
     // 返回所有能够通过所有断言测试的值。如果是对象，也只返回值。
     _.filter = function (obj, predicate, context) {
-        predicate = cb(predicate)
+        predicate = cb(predicate, context)
         var results = []
         _.each(obj, function (val, index, list) {
             if (predicate(val, index, list)) {

@@ -300,5 +300,42 @@
         assert.strictEqual(_.matcher({ __x__: void 0 })({ __x__: void 0 }), true, '可以匹配未定义的属性值')
         assert.strictEqual(_.matcher({})(null), true, '空规则对空对象返回true')
         assert.strictEqual(_.matcher({ a: 1 })(null), false, '空规则对非空对象返回false')
+        assert.strictEqual(_.find(stooges, _.matcher({ hair: false })), curly, '返回一个可以被用于查找的断言函数')
+        assert.strictEqual(_.find(stooges, _.matcher(moe)), moe, '可以被用于定位一个已经在集合中的对象')
+
+        var falsy = [null, void 0]
+        assert.deepEqual(_.filter(falsy, _.matcher({ a: 1 })), [], '空值不会出错')
+        assert.deepEqual(_.filter(falsy, _.matcher({})), falsy, 'null matches {}')
+        assert.deepEqual(_.filter(falsy, _.matcher(null)), falsy, 'null matches null')
+        assert.deepEqual(_.filter([{ b: 1 }], _.matcher({ a: void 0 })), [], '可以处理undefined值')
+
+        _.each([true, 5, NaN, null, void 0], function (item) {
+            assert.strictEqual(_.matcher(item)({ a: 1 }), true, '对待原始类型像空值一样')
+        })
+
+        function Prototest () {}
+        Prototest.prototype.x = 1
+        var specObj = new Prototest(),
+            protospec = _.matcher(specObj)
+        assert.strictEqual(protospec({ x: 2 }), true, '检索值不包括原型上的可枚举值')
+
+        specObj.y = 5
+        protospec = _.matcher(specObj)
+        assert.strictEqual(protospec({ x: 1, y: 5 }), true)
+        assert.strictEqual(protospec({ x: 1, y: 4 }), false)
+        assert.ok(_.matcher({ x: 1, y: 5 })(specObj), '被检索值包括原型上的可枚举属性')
+
+        Prototest.x = 5
+        assert.ok(_.matcher(Prototest)({ x: 5, y: 1 }), '可以是一个function')
+
+        var obj = { b: 1 },
+            matcher = _.matcher(obj)
+        assert.strictEqual(matcher({ b: 1 }), true)
+        obj.b = 2
+        obj.a = 1
+        assert.strictEqual(matcher({ b: 1 }), true, '改变检索对象不会改变被检索的结果')
+
+        var oCon = _.matcher({ constructor: Object })
+        assert.deepEqual(_.map([null, void 0, 5, {}], oCon), [false, false, false, true], '不会在undefined或null值上错误地匹配constructor')
     })
 })()
