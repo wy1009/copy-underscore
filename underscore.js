@@ -421,6 +421,18 @@
         return _.indexOf(obj, item, fromIndex) >= 0
     }
 
+    // 返回所有能够通过所有断言测试的值。如果是对象，也只返回值。
+    _.filter = function (obj, predicate, context) {
+        predicate = cb(predicate)
+        var results = []
+        _.each(obj, function (val, index, list) {
+            if (predicate(val, index, list)) {
+                results.push(val)
+            }
+        })
+        return results
+    }
+
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {
         var type = typeof obj
