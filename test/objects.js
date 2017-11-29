@@ -338,4 +338,8 @@
         var oCon = _.matcher({ constructor: Object })
         assert.deepEqual(_.map([null, void 0, 5, {}], oCon), [false, false, false, true], '不会在undefined或null值上错误地匹配constructor')
     })
+
+    QUnit.test('matches', function (assert) {
+        assert.strictEqual(_.matches, _.matcher, '是matcher的别名')
+    })
 })()
