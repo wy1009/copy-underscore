@@ -32,6 +32,9 @@
         if (val === void 0 || val === null) {
             return _.identify
         }
+        if (_.isObject(val) && !_.isArray(val)) {
+            return _.matcher(val)
+        }
         // 传入值不是以上任何类型，当做对象的取值路径处理，返回一个可以传入对象，返回按照该路径取的值的函数
         return _.property(val)
     }
