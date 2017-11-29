@@ -140,6 +140,8 @@
         }, obj)
 
         var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }]
-        // assert.deepEqual(_.filter(list, { a: 1 }), [])
+        assert.deepEqual(_.filter(list, { a: 1 }), [{ a: 1, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }])
+        assert.deepEqual(_.filter(list, { b: 2 }), [{ a: 1, b: 2 }, { a: 2, b: 2 }])
+        assert.deepEqual(_.filter(list, {}), list, '空对象返回所有值')
     })
 })()
