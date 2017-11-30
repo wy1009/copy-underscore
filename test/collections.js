@@ -70,9 +70,15 @@
         var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }]
         assert.notOk(_.every(list, { a: 1, b: 2 }), '可以传入对象')
         assert.ok(_.every(list, 'a'), '可以传入字符串')
-        
+
         list = [{ a: 1, b: 2 }, { a: 2, b: 2, c: true }]
         assert.ok(_.every(list, { b: 2 }), '可以传入对象')
+        assert.notOk(_.every(list, 'c'), 'string被作为对象的属性名')
+
+        assert.ok(_.every({ a: 1, b: 2, c: 3, d: 4 }, _.isNumber), '接受object')
+        assert.notOk(_.every({ a: 1, b: 2, c: 3, d: 4 }, _.isObject), '接受object')
+        assert.ok(_.every(['a', 'b', 'c', 'd'], _.hasOwnProperty, { a: 1, b: 2, c: 3, d: 4 }), '执行上下文')
+        assert.notOk(_.every(['a', 'b', 'c', 'd', 'e'], _.hasOwnProperty, { a: 1, b: 2, c: 3, d: 4 }), '执行上下文')
     })
 
     QUnit.test('includes', function (assert) {
