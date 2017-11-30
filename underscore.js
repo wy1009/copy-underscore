@@ -302,12 +302,11 @@
     // 如果obj中所有元素都通过predicate真值检测就返回true
     _.every = _.all = function (obj, predicate, context) {
         predicate = cb(predicate, context)
-        if (Array.prototype.every) {
-            return Array.prototype.every.call(obj, predicate)
-        }
         var keys = !isArrayLike(obj) && _.keys(obj),
             length = (keys || obj).length
-
+        if (!keys && Array.prototype.every) {
+            return Array.prototype.every.call(obj, predicate)
+        }
         for (var i = 0; i < length; i ++) {
             var currentKey = keys ? keys[i] : i
             if (!predicate(obj[currentKey], currentKey, obj)) {
