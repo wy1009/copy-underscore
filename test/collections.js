@@ -1,4 +1,58 @@
 ;(function () {
+    QUnit.test('each', function (assert) {
+        var list = [1, 2, 3]
+        _.each(list, function (num, i) {
+            assert.strictEqual(num, i + 1, '每个回调函数提供了value和index')
+        })
+
+        var ans = []
+        _.each(list, function (num) {
+            ans.push(num * this.multiplier)
+        }, { multiplier: 5 })
+        assert.deepEqual(ans, [5, 10, 15], '执行上下文')
+
+        ans = []
+        _.each(list, function (num) {
+            ans.push(num)
+        })
+        assert.deepEqual(ans, list, '可以简单地迭代一个数组')
+
+        ans = []
+        var obj = { one: 1, two: 2, three: 3 }
+        obj.constructor.prototype.four = 4
+        _.each(obj, function (val, key) {
+            ans.push(key)
+        })
+        assert.deepEqual(ans, ['one', 'two', 'three'], '迭代奏效，并无视了原型链上的属性')
+        delete obj.constructor.prototype.four
+
+        var count = 0
+        obj = { 1: 'foo', 2: 'bar', 3: 'baz' }
+        _.each(obj, function () {
+            count ++
+        })
+        assert.strictEqual(count, 3, '这个函数应该被执行三次')
+
+        ans = null
+        _.each(list, function (num, i, arr) {
+            if (_.include(arr, num)) {
+                ans = true
+            }
+        })
+        assert.ok(ans, '可以从迭代器中取得值')
+
+        ans = 0
+        _.each(null, function () {
+            ++ ans
+        })
+        assert.strictEqual(ans, 0, '传入null值')
+
+        _.each(false, _.noop)
+
+        assert.strictEqual(_.each(list, _.noop), list, '返回处理后的对象')
+        assert.strictEqual(_.each(null, _.noop), null)
+    })
+
     QUnit.test('map', function (assert) {
         var doubled = _.map([1, 2, 3], function (num) {
             return num * 2

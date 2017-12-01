@@ -101,6 +101,7 @@
                 iteratee(obj[keys[i]], keys[i], obj)
             }
         }
+        return obj
     }
 
     // 将传入的array/object逐项处理，返回处理后的value数组
