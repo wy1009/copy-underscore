@@ -19,7 +19,7 @@
 
         var trouble = {
             constructor: Object,
-            valueOf: function () {},
+            valueOf: _.noop,
             hasOwnProperty: null,
             toString: 5,
             toLocaleString: void 0,
@@ -79,7 +79,7 @@
         if (testElement) {
             assert.ok(_.isObject(testElement), 'DOM元素是对象')
         }
-        assert.ok(_.isObject(function () {}), '函数是对象')
+        assert.ok(_.isObject(_.noop), '函数是对象')
         assert.notOk(_.isObject(null), 'null不是对象')
         assert.notOk(_.isObject(void 0), 'undefined不是对象')
         assert.notOk(_.isObject('string'), 'string不是对象')

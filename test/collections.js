@@ -1,4 +1,37 @@
 ;(function () {
+    QUnit.test('reduce', function (assert) {
+        var arr = [1, 2, 3]
+        assert.strictEqual(_.reduce(arr, function (memo, num) {
+            return memo + num
+        }, 0), 6, '可以将一个数组加在一起')
+
+        var context = { multiplier: 3 }
+        assert.strictEqual(_.reduce(arr, function (memo, num) {
+            return memo + num * this.multiplier
+        }, 0, context), 18, '执行上下文')
+
+        assert.strictEqual(_.reduce(arr, function (memo, num) {
+            return memo + num
+        }), 6, '默认初始值')
+
+        assert.strictEqual(_.reduce([1, 2, 3, 4], function (memo, num) {
+            return memo * num
+        }), 24, '可以乘法归纳')
+        
+        assert.strictEqual(_.reduce(null, _.noop, 138), 138, '可以接受有初始值的null')
+        assert.strictEqual(_.reduce([], _.noop, void 0), void 0, 'undefined可以作为特殊用例通过')
+        assert.strictEqual(_.reduce([_], _.noop), _, '集合长度为1，没有初始值，返回第一个值')
+        assert.strictEqual(_.reduce([], _.noop), void 0, '集合为空，没有初始值，返回undefined')
+    })
+
+    QUnit.test('foldl', function (assert) {
+        assert.strictEqual(_.foldl, _.reduce, '是reduce的别名')
+    })
+
+    QUnit.test('inject', function (assert) {
+        assert.strictEqual(_.inject, _.reduce, '是reduce的别名')
+    })
+
     QUnit.test('map', function (assert) {
         var doubled = _.map([1, 2, 3], function (num) {
             return num * 2
@@ -15,7 +48,7 @@
         })
         assert.deepEqual(ids, [1, 2], '可以用于array-like对象')
 
-        assert.deepEqual(_.map(null, function () {}), [], '可以处理空的情况')
+        assert.deepEqual(_.map(null, _.noop), [], '可以处理空的情况')
         assert.deepEqual(_.map([1], function (item) {
             return this.length
         }, [1, 2]), [2], '有执行上下文的情况')

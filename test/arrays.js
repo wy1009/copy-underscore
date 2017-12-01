@@ -70,7 +70,7 @@
 
         // 以该测试用例为例，传入一个字符串，相当于检测数组每项的'a'属性是否为true，为true则返回index
         assert.strictEqual(_.findLastIndex(objects, 'aa'), 4)
-        assert.strictEqual(_.findLastIndex(null, function () {}), -1)
+        assert.strictEqual(_.findLastIndex(null, _.noop), -1)
         
         _.findLastIndex([{ a: 1 }], function (obj, index, objs) {
             assert.strictEqual(index, 0)

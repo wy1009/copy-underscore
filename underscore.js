@@ -101,6 +101,23 @@
         }
     }
 
+    _.reduce = _.foldl = _.inject = function (obj, iteratee, memo, context) {
+        iteratee = optimizCb(iteratee, context)
+        var keys = !isArrayLike(obj) && _.keys(obj),
+            length = (keys || obj).length
+        
+        var i = 0
+        if (memo === void 0) {
+            memo = keys ? obj[keys[i]] : obj[i]
+            i ++
+        }
+        for (; i < length; i ++) {
+            var key = keys ? keys[i] : i
+            memo = iteratee(memo, obj[key], key, obj)
+        }
+        return memo
+    }
+
     // 用于处理IE<9的bug
     var hasEnumBug = !{ toString: null }.propertyIsEnumerable('toString'),
         nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString', 'propertyIsEnumerable', 'hasOwnProperty', 'toLocalString']
@@ -450,6 +467,8 @@
         })
         return results
     }
+
+    _.noop = function () {}
 
     // 传入的变量是否是对象类型。函数（typeof为function）、object、数组、DOM元素（后三个typeof皆为object）被视为对象类型。
     _.isObject = function (obj) {
