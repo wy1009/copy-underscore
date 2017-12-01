@@ -32,6 +32,52 @@
         assert.strictEqual(_.inject, _.reduce, '是reduce的别名')
     })
 
+    QUnit.test('reduceRight', function (assert) {
+        var list = ['foo', 'bar', 'baz']
+        assert.strictEqual(_.reduceRight(list, function (memo, str) {
+            return memo + str
+        }, ''), 'bazbarfoo', '可以从右折叠')
+        assert.strictEqual(_.reduceRight(list, function (memo, str) {
+            return memo + str
+        }), 'bazbarfoo', '默认初始值')
+
+        assert.strictEqual(_.reduceRight({ a: 1, b: 2, c: 3 }, function (memo, num) {
+            return memo + num
+        }), 6, '传入对象，默认初始值')
+
+        assert.strictEqual(_.reduce(null, _.noop, 138), 138, '可以接受有初始值的null')
+        assert.strictEqual(_.reduce([], _.noop, void 0), void 0, 'undefined可以作为特殊用例通过')
+        assert.strictEqual(_.reduce([_], _.noop), _, '集合长度为1，没有初始值，返回第一个值')
+        assert.strictEqual(_.reduce([], _.noop), void 0, '集合为空，没有初始值，返回undefined')
+
+        var args,
+            init = {},
+            obj = { a: 1, b: 2 },
+            lastKey = _.keys(obj).pop()
+        var expected = lastKey === 'a' ? [init, 1, 'a', obj] : [init, 2, 'b', obj]
+        _.reduceRight(obj, function () {
+            if (!args) {
+                args = _.toArray(arguments)
+            }
+        }, init)
+        assert.deepEqual(args, expected)
+
+        obj = { 2: 'a', 1: 'b' }
+        lastKey = _.keys(obj).pop()
+        args = null
+        expected = lastKey === '2' ? [init, 'a', '2', obj] : [init, 'b', '1', obj]
+        _.reduceRight(obj, function () {
+            if (!args) {
+                args = _.toArray(arguments)
+            }
+        }, init)
+        assert.deepEqual(args, expected)
+    })
+
+    QUnit.test('foldr', function (assert) {
+        assert.strictEqual(_.foldr, _.reduceRight, '是reduceRight的别名')
+    })
+
     QUnit.test('map', function (assert) {
         var doubled = _.map([1, 2, 3], function (num) {
             return num * 2

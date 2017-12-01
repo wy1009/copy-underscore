@@ -101,22 +101,27 @@
         }
     }
 
-    _.reduce = _.foldl = _.inject = function (obj, iteratee, memo, context) {
-        iteratee = optimizCb(iteratee, context)
-        var keys = !isArrayLike(obj) && _.keys(obj),
+    var createReducer = function (dir) {
+        return function (obj, iteratee, memo, context) {
+            iteratee = optimizCb(iteratee, context)
+            var keys = !isArrayLike(obj) && _.keys(obj),
             length = (keys || obj).length
-        
-        var i = 0
-        if (memo === void 0) {
-            memo = keys ? obj[keys[i]] : obj[i]
-            i ++
+
+            var i = dir > 0 ? 0 : length - 1
+            if (memo === void 0) {
+                memo = keys ? obj[keys[i]] : obj[i]
+                i += dir
+            }
+            for (; i >= 0 && i < length; i += dir) {
+                var key = keys ? keys[i] : i
+                memo = iteratee(memo, obj[key], key, obj)
+            }
+            return memo
         }
-        for (; i < length; i ++) {
-            var key = keys ? keys[i] : i
-            memo = iteratee(memo, obj[key], key, obj)
-        }
-        return memo
     }
+
+    _.reduce = _.foldl = _.inject = createReducer(1)
+    _.reduceRight = _.foldr = createReducer(-1)
 
     // 用于处理IE<9的bug
     var hasEnumBug = !{ toString: null }.propertyIsEnumerable('toString'),
