@@ -159,6 +159,11 @@
         return results
     }
 
+    // 和向filter直接传入obj是同样的表现，即筛选出对象列表中能匹配attrs的对象
+    _.where = function (obj, attrs) {
+        return _.filter(obj, _.matcher(attrs))
+    }
+
     // 如果obj中所有元素都通过predicate真值检测就返回true
     _.every = _.all = function (obj, predicate, context) {
         predicate = cb(predicate, context)
