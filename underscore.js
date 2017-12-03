@@ -177,6 +177,11 @@
         }
     }
 
+    // 返回obj中没有通过predicate真值检测的集合，与filter相反
+    _.reject = function (obj, predicate, context) {
+        return _.filter(obj, _.negate(cb(predicate, context)))
+    }
+
     // 如果obj中所有元素都通过predicate真值检测就返回true
     _.every = _.all = function (obj, predicate, context) {
         predicate = cb(predicate, context)

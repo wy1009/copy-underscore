@@ -261,6 +261,28 @@
         assert.strictEqual(_.findWhere([{ y: 5, b: 6 }, expected], new TestClass()), expected, '使用实例的属性')
     })
 
+    QUnit.test('reject', function (assert) {
+        var numbers = [1, 2, 3, 4, 5, 6]
+        var odds = _.reject(numbers, function (n) {
+            return !(n & 1)
+        })
+        assert.deepEqual(odds, [1, 3, 5], '拒绝每个偶数')
+
+        var context = 'obj'
+        var evens = _.reject(numbers, function (n) {
+            assert.strictEqual(context, 'obj')
+            return n & 1
+        }, context)
+        assert.deepEqual(evens, [2, 4, 6], '拒绝每个奇数')
+
+        assert.deepEqual(_.reject([odds, { one: 1, two: 2, three: 3 }], 'two'), [odds], '断言字符类型')
+
+        var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }]
+        assert.deepEqual(_.reject(list, { a: 1 }), [{ a: 2, b: 2 }])
+        assert.deepEqual(_.reject(list, { b: 2 }), [{ a: 1, b: 3 }, { a: 1, b: 4 }])
+        assert.deepEqual(_.reject(list, {}), [], '当给予空对象，返回空列表')
+    })
+
     QUnit.test('every', function (assert) {
         assert.ok(_.every([], _.identify), true, '空集合返回true')
         assert.ok(_.every([true, true, true], _.identify), true, '每项都为true')
