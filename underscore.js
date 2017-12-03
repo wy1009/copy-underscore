@@ -170,13 +170,6 @@
         return _.find(obj, _.matcher(attrs))
     }
 
-    // 返回传入断言函数的一个相反值
-    _.negate = function (predicate) {
-        return function () {
-            return !predicate.apply(this, arguments)
-        }
-    }
-
     // 返回obj中没有通过predicate真值检测的集合，与filter相反
     _.reject = function (obj, predicate, context) {
         return _.filter(obj, _.negate(cb(predicate, context)))
@@ -344,6 +337,13 @@
     })
 
     _.partial.placeholder = _
+
+    // 返回传入断言函数的一个相反值
+    _.negate = function (predicate) {
+        return function () {
+            return !predicate.apply(this, arguments)
+        }
+    }
 
     // Objects - 对象
 
