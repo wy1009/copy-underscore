@@ -170,6 +170,13 @@
         return _.find(obj, _.matcher(attrs))
     }
 
+    // 返回传入断言函数的一个相反值
+    _.negate = function (predicate) {
+        return function () {
+            return !predicate.apply(this, arguments)
+        }
+    }
+
     // 如果obj中所有元素都通过predicate真值检测就返回true
     _.every = _.all = function (obj, predicate, context) {
         predicate = cb(predicate, context)

@@ -1,4 +1,12 @@
 ;(function () {
+    QUnit.test('negate', function (assert) {
+        var isOdd = function (n) {
+            return n & 1
+        }
+        assert.strictEqual(_.negate(isOdd)(2), true)
+        assert.strictEqual(_.negate(isOdd)(1), false)
+    })
+
     QUnit.test('partial', function (assert) {
         var obj = { name: 'moe' },
             func = function () { return this.name + ' ' + _.toArray(arguments).join(' ') }
