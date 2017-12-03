@@ -242,6 +242,25 @@
         assert.deepEqual(_.where([_, { a: 1, b: 2 }, _], test), [_, _], '函数的属性也会被检查')
     })
 
+    QUnit.test('findWhere', function (assert) {
+        var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }]
+        assert.deepEqual(_.findWhere(list, { a: 1 }), { a: 1, b: 2 })
+        assert.deepEqual(_.findWhere(list, { b: 4 }), { a: 1, b: 4 })
+        assert.strictEqual(_.findWhere(list, { c: 1 }), void 0, '查找不到结果时返回undefined')
+        assert.strictEqual(_.findWhere([], { a: 1 }), void 0, '列表为空时返回undefined')
+
+        function test () {}
+        test.map = _.map
+        assert.strictEqual(_.findWhere([_, { a: 1, b: 2 }, _], test), _, '函数的属性也会被检查')
+
+        function TestClass () {
+            this.y = 5
+            this.x = 'foo'
+        }
+        var expected = { c: 1, x: 'foo', y: 5 }
+        assert.strictEqual(_.findWhere([{ y: 5, b: 6 }, expected], new TestClass()), expected, '使用实例的属性')
+    })
+
     QUnit.test('every', function (assert) {
         assert.ok(_.every([], _.identify), true, '空集合返回true')
         assert.ok(_.every([true, true, true], _.identify), true, '每项都为true')

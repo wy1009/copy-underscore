@@ -165,6 +165,11 @@
         return _.filter(obj, _.matcher(attrs))
     }
 
+    // 和向find直接传入obj是同样的表现，即返回对象列表（或对象）中第一个能匹配attrs的对象（或值）
+    _.findWhere = function (obj, attrs) {
+        return _.find(obj, _.matcher(attrs))
+    }
+
     // 如果obj中所有元素都通过predicate真值检测就返回true
     _.every = _.all = function (obj, predicate, context) {
         predicate = cb(predicate, context)
