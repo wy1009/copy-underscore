@@ -175,22 +175,32 @@
         return _.filter(obj, _.negate(cb(predicate, context)))
     }
 
-    // 如果obj中所有元素都通过predicate真值检测就返回true
-    _.every = _.all = function (obj, predicate, context) {
-        predicate = cb(predicate, context)
-        var keys = !isArrayLike(obj) && _.keys(obj),
-            length = (keys || obj).length
-        if (!keys && Array.prototype.every) {
-            return Array.prototype.every.call(obj, predicate)
-        }
-        for (var i = 0; i < length; i ++) {
-            var currentKey = keys ? keys[i] : i
-            if (!predicate(obj[currentKey], currentKey, obj)) {
-                return false
+    var createChecker = function (dir) {
+        return function (obj, predicate, context) {
+            predicate = cb(predicate, context)
+            var keys = !isArrayLike(obj) && _.keys(obj),
+                length = (keys || obj).length
+            if (!keys && !dir && Array.prototype.every) {
+                return Array.prototype.every.call(obj, predicate)
             }
+            if (!keys && dir && Array.prototype.every) {
+                return Array.prototype.some.call(obj, predicate)
+            }
+            for (var i = 0; i < length; i ++) {
+                var currentKey = keys ? keys[i] : i
+                if (!!predicate(obj[currentKey], currentKey, obj) === dir) {
+                    return dir
+                }
+            }
+            return !dir
         }
-        return true
     }
+
+    // 如果obj中所有元素都通过predicate真值检测就返回true
+    _.every = _.all = createChecker(false)
+
+    // 如果obj中有一个元素通过predicate纸质检测就返回true
+    _.some = _.any = createChecker(true)
 
     // 列表或对象中是否包含给定的值
     _.contains = _.includes = _.include = function (obj, item, fromIndex) {

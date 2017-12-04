@@ -311,6 +311,40 @@
         assert.notOk(_.every(['a', 'b', 'c', 'd', 'e'], _.hasOwnProperty, { a: 1, b: 2, c: 3, d: 4 }), '执行上下文')
     })
 
+    QUnit.test('all', function (assert) {
+        assert.strictEqual(_.all, _.every, '是every的别名')
+    })
+
+    QUnit.test('some', function (assert) {
+        assert.notOk(_.some([]), '空集合')
+        assert.notOk(_.some([false, false, false]), '全部是false')
+        assert.ok(_.some([false, false, true]), '一个true')
+        assert.ok(_.some([null, 0, 'yes', false]), '一个字符串')
+        assert.notOk(_.some([null, 0, '', false]), 'falsy值')
+        assert.notOk(_.some([1, 11, 29], function (num) {
+            return !(num & 1)
+        }), '全部是奇数')
+        assert.ok(_.some([1, 10, 29], function (num) {
+            return !(num & 1)
+        }), '有一个偶数')
+        assert.strictEqual(_.some([1], _.identify), true)
+        assert.strictEqual(_.some([0], _.identify), false)
+        assert.ok([false, false, true])
+
+        var list = [{ a: 1, b: 2 }, { a: 2, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }]
+        assert.notOk(_.some(list, { a: 5, b: 2 }), 'can be called width obj')
+        assert.ok(_.some(list, 'a'), '字符串mapped to对象属性')
+
+        list = [{ a: 1, b: 2 }, { a: 2, b: 2, c: true }]
+        assert.ok(_.some(list, { b: 2 }), 'can be called width obj')
+        assert.notOk(_.some(list, 'd'), '字符串mapped to对象属性')
+
+        assert.ok(_.some({ a: '1', b: '2', c: '3', d: '4', e: 6 }, _.isNumber), '接受对象')
+        assert.notOk(_.some({ a: 1, b: 2, c: 3, d: 4 }, _.isObject))
+        assert.ok(_.some(['a', 'b', 'c', 'd'], _.hasOwnProperty, { a: 1, b: 2, c: 3, d: 4 }), '执行上下文')
+        assert.notOk(_.some(['x', 'y', 'z'], _.hasOwnProperty, { a: 1, b: 2, c: 3, d: 4 }), '执行上下文')
+    })
+
     QUnit.test('includes', function (assert) {
         _.each([null, void 0, 0, 1, NaN, {}, []], function (val) {
             assert.strictEqual(_.includes(val, 'hasOwnProperty'), false)
