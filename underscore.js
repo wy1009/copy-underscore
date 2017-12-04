@@ -183,7 +183,7 @@
             if (!keys && !dir && Array.prototype.every) {
                 return Array.prototype.every.call(obj, predicate)
             }
-            if (!keys && dir && Array.prototype.every) {
+            if (!keys && dir && Array.prototype.some) {
                 return Array.prototype.some.call(obj, predicate)
             }
             for (var i = 0; i < length; i ++) {
