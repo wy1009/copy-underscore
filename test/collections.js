@@ -345,6 +345,10 @@
         assert.notOk(_.some(['x', 'y', 'z'], _.hasOwnProperty, { a: 1, b: 2, c: 3, d: 4 }), '执行上下文')
     })
 
+    QUnit.test('any', function (assert) {
+        assert.strictEqual(_.any, _.some, '是some的别名')
+    })
+
     QUnit.test('includes', function (assert) {
         _.each([null, void 0, 0, 1, NaN, {}, []], function (val) {
             assert.strictEqual(_.includes(val, 'hasOwnProperty'), false)

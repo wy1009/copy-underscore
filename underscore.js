@@ -40,9 +40,8 @@
     }
 
     // 注释说是与es6中的rest parameters相同，但感觉原代码只是switch后的那部分的功能与rest parameters相同
-    // 前面的功能更像是根据这份代码本身的设计做出的特殊处理
-    // 总之目前暂时只用得到case为1的情况，就暂时先这么写，否则也不懂它为什么要这样处理
-    // 以后用到其他情况再做补充
+    // 简单说，功能就是，统一将arguments为多个参数的部分收集为一个数组，如func(func, a, b, c, d)
+    // 目的就是将所有这样设计的方法的abcd部分统一收集为数组，方便处理
     var restArgs = function (func) {
         return function () {
             var rest = []
