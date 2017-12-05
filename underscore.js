@@ -42,14 +42,17 @@
     // 注释说是与es6中的rest parameters相同，但感觉原代码只是switch后的那部分的功能与rest parameters相同
     // 简单说，功能就是，统一将arguments为多个参数的部分收集为一个数组，如func(func, a, b, c, d)
     // 目的就是将所有这样设计的方法的abcd部分统一收集为数组，方便处理
-    var restArgs = function (func) {
+    var restArgs = function (func, startIndex) {
+        startIndex = startIndex === void 0 ? func.length - 1 : startIndex
         return function () {
             var rest = []
-            for (var i = 0; i < arguments.length - 1; i ++) {
-                rest[i] = arguments[i + 1]
+            for (var i = 0; i < arguments.length - startIndex; i ++) {
+                rest[i] = arguments[i + startIndex]
             }
-            // 原代码中这里有一个switch，case: 1的代码是如下的func.call
-            return func.call(this, arguments[0], rest)
+            switch (startIndex) {
+                case 1: return func.call(this, arguments[0], rest); break;
+                case 2: return func.call(this, arguments[0], arguments[1], rest); break;
+            }
         }
     }
 
@@ -208,6 +211,26 @@
         }
         return _.indexOf(obj, item, fromIndex) >= 0
     }
+
+    _.invoke = restArgs(function (obj, path, args) {
+        var func,
+            contextPath
+        if (_.isFunction(path)) {
+            func = path
+            return _.map(obj, func)
+        } else if (_.isArray(path)) {
+            contextPath = path.slice(0, -1)
+            path = path[path.length - 1]
+        }
+        return _.map(obj, function (item) {
+            var context = contextPath && contextPath.length ? deepGet(item, contextPath) : item
+            func = path === undefined ? void 0 : context[path]
+            if (!func) {
+                return void 0
+            }
+            return func.apply(context, args)
+        })
+    })
 
     // 安全创建一个数组
     var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;

@@ -375,6 +375,23 @@
         assert.strictEqual(_.contains, _.includes, '是includes的别名')
     })
 
+    QUnit.test('invoke', function (assert) {
+        var list = [[5, 1, 7], [3, 2, 1]]
+        var result = _.invoke(list, 'sort')
+        assert.deepEqual(result[0], [1, 5, 7], '第一个数组被排序了')
+        assert.deepEqual(result[1], [1, 2, 3], '第二个数组被排序了')
+
+        _.invoke([{
+            method: function () {
+                assert.deepEqual(_.toArray(arguments), [1, 2, 3], 'called width arguments')
+            }
+        }], 'method', 1, 2, 3)
+
+        assert.raises(function () {
+            _.invoke([{ a: 1 }], 'a')
+        }, TypeError, '不是函数抛出错误')
+    })
+
     QUnit.test('toArray', function (assert) {
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray(_.toArray()), '将arguments转换为数组')
