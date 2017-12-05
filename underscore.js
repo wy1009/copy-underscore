@@ -568,6 +568,13 @@
         return val
     }
 
+    // 生成断言的函数
+    _.constant = function (val) {
+        return function () {
+            return val
+        }
+    }
+
     // 默认可选的回调函数
     _.noop = function () {}
 })()
