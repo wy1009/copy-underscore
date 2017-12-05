@@ -217,18 +217,20 @@
             contextPath
         if (_.isFunction(path)) {
             func = path
-            return _.map(obj, func)
         } else if (_.isArray(path)) {
             contextPath = path.slice(0, -1)
             path = path[path.length - 1]
         }
         return _.map(obj, function (item) {
-            var context = contextPath && contextPath.length ? deepGet(item, contextPath) : item
-            func = path === undefined ? void 0 : context[path]
-            if (!func) {
-                return void 0
+            var method = func,
+                context = contextPath && contextPath.length ? deepGet(item, contextPath) : item
+            if (!method) {
+                if (context === null || context === void 0) {
+                    return void 0
+                }
+                method = context[path]
             }
-            return func.apply(context, args)
+            return method === null || method === undefined ? method : method.apply(context, args)
         })
     })
 

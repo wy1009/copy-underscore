@@ -390,6 +390,44 @@
         assert.raises(function () {
             _.invoke([{ a: 1 }], 'a')
         }, TypeError, '不是函数抛出错误')
+
+        var getFoo = _.constant('foo'),
+            getThis = function () {
+                return this
+            },
+            item = {
+                a: {
+                    b: getFoo,
+                    c: getThis,
+                    d: null
+                },
+                e: getFoo,
+                f: getThis,
+                g: function () {
+                    return {
+                        h: getFoo
+                    }
+                }
+            },
+            arr = [item]
+        assert.deepEqual(_.invoke(arr, ['a', 'b']), ['foo'], '支持通过数组语法使用deep method')
+        assert.deepEqual(_.invoke(arr, ['a', 'c']), [item.a], '在他们的直接父节点上执行deep method')
+        assert.deepEqual(_.invoke(arr, ['a', 'd', 'z']), [void 0], '不试图使用非数组的属性')
+        assert.deepEqual(_.invoke(arr, ['a', 'd']), [null], '支持deep null值')
+        assert.deepEqual(_.invoke(arr, ['e']), ['foo'], '支持长度为一的path数组')
+        assert.deepEqual(_.invoke(arr, ['f']), [item], '正确使用父执行上下文')
+        assert.deepEqual(_.invoke(arr, ['g', 'h']), [void 0], '不会执行中间的函数')
+
+        arr = [{
+            a: function () {
+                return 'foo'
+            }
+        }, {
+            a: function () {
+                return 'bar'
+            }
+        }]
+        assert.deepEqual(_.invoke(arr, 'a'), ['foo', 'bar'], '可以支持在后来的对象上的不同方法')
     })
 
     QUnit.test('toArray', function (assert) {
