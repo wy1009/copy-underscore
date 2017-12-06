@@ -428,6 +428,27 @@
             }
         }]
         assert.deepEqual(_.invoke(arr, 'a'), ['foo', 'bar'], '可以支持在后来的对象上的不同方法')
+
+        // 调用函数引用
+        result = _.invoke(list, Array.prototype.sort)
+        assert.deepEqual(result[0], [1, 5, 7], '第一个数组被排序')
+        assert.deepEqual(result[1], [1, 2, 3], '第二个数组被排序')
+
+        assert.deepEqual(_.invoke([1, 2, 3], function (a) {
+            return a + this
+        }, 5), [6, 7, 8], '从invoke获得参数')
+
+        // 当string有一个call函数时
+        String.prototype.call = function () {
+            return 42
+        }
+        var s = 'foo'
+        assert.strictEqual(s.call(), 42, '函数call存在')
+        result = _.invoke(list, 'sort')
+        assert.deepEqual(result[0], [1, 5, 7], '第一个数组被排序')
+        assert.deepEqual(result[1], [1, 2, 3], '第二个数组被排序')
+        delete String.prototype.call
+        assert.strictEqual(s.call, void 0, '函数call被移除')
     })
 
     QUnit.test('toArray', function (assert) {
