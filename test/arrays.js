@@ -142,7 +142,14 @@
         assert.strictEqual(_.indexOf(numbers, 35, true), -1, '35不在列表中')
         assert.strictEqual(_.indexOf(numbers, 40, true), 3, '40在列表中')
 
+        numbers = [1, 40, 40, 40, 40, 40, 40, 40, 50, 60, 70]
+        num = 40
+        assert.strictEqual(_.indexOf(numbers, num, true), 1, '40在列表中')
+        assert.strictEqual(_.indexOf(numbers, 6, true), -1, '6不在列表中')
         assert.strictEqual(_.indexOf([1, 2, 5, 4, 6, 7], 5, true), -1, '非有序数组传入true会导致查找错误');
+        assert.ok(_.every(['1', [], {}, null], function () {
+            return _.indexOf(numbers, num, {}) === 1
+        }))
 
         numbers = [1, 2, 3, 1, 2, 3]
         assert.strictEqual(_.indexOf(numbers, 2, 3), 4, '支持fromIndex参数')

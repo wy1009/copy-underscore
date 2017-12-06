@@ -365,6 +365,9 @@
         assert.strictEqual(_.includes(numbers, 1, -3), true, 'fromIndex')
         assert.strictEqual(_.includes(numbers, 1, 6), true, 'fromIndex')
         assert.strictEqual(_.includes(numbers, 1, 7), false, 'fromIndex')
+        
+        // 不懂这个测试用例的意义，也不知道guard的意义，文档也没有提到这个参数的意义，因此没有在代码中写入guard参数
+        assert.ok(_.every([1, 2, 3], _.partial(_.includes, numbers)), 'fromIndex is guarded')
     })
 
     QUnit.test('include', function (assert) {
@@ -386,6 +389,8 @@
                 assert.deepEqual(_.toArray(arguments), [1, 2, 3], 'called width arguments')
             }
         }], 'method', 1, 2, 3)
+
+        assert.deepEqual(_.invoke([{ a: null }, {}, { a: _.constant(1) }], 'a'), [null, void 0, 1], '支持null和undefined')
 
         assert.raises(function () {
             _.invoke([{ a: 1 }], 'a')
