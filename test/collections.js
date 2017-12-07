@@ -456,6 +456,14 @@
         assert.strictEqual(s.call, void 0, '函数call被移除')
     })
 
+    QUnit.test('pluck', function (assert) {
+        var people = [{ name: 'moe', age: 30 }, { name: 'curly', age: 50 }]
+        assert.deepEqual(_.pluck(people, 'name'), ['moe', 'curly'], '从对象中萃取name')
+        assert.deepEqual(_.pluck(people, 'address'), [void 0, void 0], '不存在的对象则返回undefined')
+        // 兼容：最灵活支持边界用例
+        assert.deepEqual(_.pluck([{ '[object Object]': 1 }], {}), [1])
+    })
+
     QUnit.test('toArray', function (assert) {
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray(_.toArray()), '将arguments转换为数组')

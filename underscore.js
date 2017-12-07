@@ -234,6 +234,13 @@
         })
     })
 
+    // 是map最常使用的用例模型简化版本，即萃取对象中某属性值，返回一个数组
+    _.pluck = function (obj, key) {
+        // 不能够直接把key传入，因为该方法只针对_.property，不管什么类型都应当做property处理
+        // 而cb方法会根据类型判断
+        return _.map(obj, _.property(key))
+    }
+
     // 安全创建一个数组
     var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
     _.toArray = function (obj) {
