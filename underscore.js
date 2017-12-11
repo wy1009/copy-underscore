@@ -230,7 +230,7 @@
                 }
                 method = context[path]
             }
-            return method === null || method === undefined ? method : method.apply(context, args)
+            return method === null || method === void 0 ? method : method.apply(context, args)
         })
     })
 
@@ -239,6 +239,31 @@
         // 不能够直接把key传入，因为该方法只针对_.property，不管什么类型都应当做property处理
         // 而cb方法会根据类型判断
         return _.map(obj, _.property(key))
+    }
+
+    _.max = function (obj, iteratee, context) {
+        var result = -Infinity
+        // 单独处理each/map等自动向回调函数传入index的方法
+        if (iteratee === null || iteratee === void 0 || (_.isNumber(iteratee) && typeof obj[0] != 'object')) {
+            _.each(obj, function (val) {
+                if (val > result) {
+                    result = val
+                }
+            })
+        } else {
+            var maxComputed = -Infinity,
+                computed
+            iteratee = cb(iteratee, context)
+            _.each(obj, function (val) {
+                computed = iteratee(val)
+                // 被遍历对象本身就有值为负无穷时特殊处理
+                if (computed > maxComputed || computed === -Infinity && result === -Infinity) {
+                    result = val
+                    maxComputed = computed
+                }
+            })
+        }
+        return result
     }
 
     // 安全创建一个数组

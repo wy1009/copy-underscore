@@ -464,6 +464,45 @@
         assert.deepEqual(_.pluck([{ '[object Object]': 1 }], {}), [1])
     })
 
+    QUnit.test('max', function (assert) {
+        assert.strictEqual(-Infinity, _.max(null), '支持null')
+        assert.strictEqual(-Infinity, _.max(void 0), '支持undefined')
+        assert.strictEqual(-Infinity, _.max(null, _.identify), '支持null/undefined')
+        assert.strictEqual(_.max([1, 2, 3]), 3, '可以表现为普通的Math.max')
+        assert.strictEqual(_.max([1, 2, 3], function (num) {
+            return -num
+        }), 1)
+        assert.strictEqual(-Infinity, _.max({}), '空对象')
+        assert.strictEqual(-Infinity, _.max([]), '空数组')
+        assert.strictEqual(_.max({ a: 'a' }), -Infinity, '不是数字集合的最大值')
+        assert.strictEqual(_.max([1, 2, 3, 'test']), 3, '以数字开头包含NaN的数组')
+        assert.strictEqual(_.max(['test', 1, 2, 3]), 3, '以NaN开头的数组')
+        assert.strictEqual(_.max([1, 2, 3, null]), 3, '以数字开头包含null的数组')
+        assert.strictEqual(_.max([null, 1, 2, 3]), 3, '以null开头的数组')
+        assert.strictEqual(_.max([1, 2, 3, '']), 3, '以数字开头包含空字符串的数组')
+        assert.strictEqual(_.max(['', 1, 2, 3]), 3, '以空字符串开头的数组')
+        assert.strictEqual(_.max([1, 2, 3, false]), 3, '以数字开头包含false的数组')
+        assert.strictEqual(_.max([false, 1, 2, 3]), 3, '以false开头的数组')
+        assert.strictEqual(_.max([0, 1, 2, 3, 4]), 4, '包含0的数组')
+        assert.strictEqual(_.max([-3, -2, -1, 0]), 0, '包含负数的数组')
+        assert.deepEqual(_.map([[1, 2, 3], [4, 5, 6]], _.max), [3, 6])
+
+        var a = { x: -Infinity },
+            b = { x: -Infinity },
+            iterator = function (obj) {
+                return obj.x
+            }
+        assert.strictEqual(_.max([a, b], iterator), a)
+
+        assert.deepEqual(_.max([{ a: 1 }, { a: 0, b: 3 }, { a: 4 }, { a: 2 }], 'a'), { a: 4 }, '字符串作为iterator')
+        assert.deepEqual(_.max([0, 2], function (c) {
+            return c * this.x
+        }, { x: 1 }), 2, '执行上下文')
+        // iterator为0，走的是_.property，相当于对比第0个元素的大小（属性值为0）
+        assert.deepEqual(_.max([[1], [2, 3], [-1, 4], [5]], 0), [5], '注意易错的iterator')
+        assert.deepEqual(_.max([{ 0: 1 }, { 0: 2 }, { 0: -1 }, { a: 1 }], 0), { 0: 2 }, '注意易错的iterator')
+    })
+
     QUnit.test('toArray', function (assert) {
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray(_.toArray()), '将arguments转换为数组')
