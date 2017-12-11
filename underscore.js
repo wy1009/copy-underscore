@@ -241,30 +241,35 @@
         return _.map(obj, _.property(key))
     }
 
-    _.max = function (obj, iteratee, context) {
-        var result = -Infinity
-        // 单独处理each/map等自动向回调函数传入index的方法
-        if (iteratee === null || iteratee === void 0 || (_.isNumber(iteratee) && typeof obj[0] != 'object')) {
-            _.each(obj, function (val) {
-                if (val > result) {
-                    result = val
-                }
-            })
-        } else {
-            var maxComputed = -Infinity,
-                computed
-            iteratee = cb(iteratee, context)
-            _.each(obj, function (val) {
-                computed = iteratee(val)
-                // 被遍历对象本身就有值为负无穷时特殊处理
-                if (computed > maxComputed || computed === -Infinity && result === -Infinity) {
-                    result = val
-                    maxComputed = computed
-                }
-            })
+    var createComparer = function (dir) {
+        return function (obj, iteratee, context) {
+            var result = dir
+            // 单独处理each/map等自动向回调函数传入index的方法
+            if (iteratee === null || iteratee === void 0 || (_.isNumber(iteratee) && typeof obj[0] !== 'object')) {
+                _.each(obj, function (val) {
+                    if (val !== null && (dir === -Infinity ? val > result : val < result)) {
+                        result = val
+                    }
+                })
+            } else {
+                var resultComputed = dir, // 目前最大/最小的计算值
+                    computed // 本次计算值
+                iteratee = cb(iteratee, context)
+                _.each(obj, function (val) {
+                    computed = iteratee(val)
+                    // 被遍历对象本身就有值为负无穷时特殊处理
+                    if (computed !== null && (dir === -Infinity ? computed > resultComputed : computed < resultComputed) || computed === dir && result === dir) {
+                        result = val
+                        resultComputed = computed
+                    }
+                })
+            }
+            return result
         }
-        return result
     }
+
+    _.max = createComparer(-Infinity)
+    _.min = createComparer(Infinity)
 
     // 安全创建一个数组
     var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;

@@ -503,6 +503,40 @@
         assert.deepEqual(_.max([{ 0: 1 }, { 0: 2 }, { 0: -1 }, { a: 1 }], 0), { 0: 2 }, '注意易错的iterator')
     })
 
+    QUnit.test('min', function (assert) {
+        assert.strictEqual(_.min(null), Infinity, '支持null和undefined')
+        assert.strictEqual(_.min(void 0), Infinity, '支持null和undefined')
+        assert.strictEqual(_.min(null, _.identify), Infinity, '支持null和undefined')
+        assert.strictEqual(_.min([1, 2, 3]), 1, '可以表现为普通的Math.min')
+        assert.strictEqual(_.min([1, 2, 3], function (num) {
+            return -num
+        }), 3)
+        assert.strictEqual(Infinity, _.min({}), '空对象')
+        assert.strictEqual(Infinity, _.min([]), '空数组')
+        assert.strictEqual(_.min({ a: 'a' }), Infinity, '不是数字集合的最小值')
+        assert.deepEqual(_.map([[1, 2, 3], [4, 5, 6]], _.min), [1, 4])
+        assert.strictEqual(_.min([1, 2, 3, 'test']), 1, '以数字开头包含NaN的数组')
+        assert.strictEqual(_.min(['test', 1, 2, 3]), 1, '以NaN开头的数组')
+        assert.strictEqual(_.min([1, 2, 3, null]), 1, '以数字开头包含null的数组')
+        assert.strictEqual(_.min([null, 1, 2, 3]), 1, '以null开头的数组')
+        assert.strictEqual(_.min([0, 1, 2, 3, 4]), 0, '包含0的数组')
+        assert.strictEqual(_.min([-3, -2, -1, 0]), -3, '包含负数的数组')
+
+        var a = { x: Infinity },
+            b = { x: Infinity },
+            iterator = function (obj) {
+                return obj.x
+            }
+        assert.strictEqual(_.min([a, b], iterator), a)
+        assert.deepEqual(_.min([{ a: 1 }, { a: 0, b: 3 }, { a: 4 }, { a: 2 }], 'a'), { a: 0, b: 3 }, '字符串作为iterator')
+        assert.deepEqual(_.min([0, 2], function (c) {
+            return c * this.x
+        }, { x: 1 }), 0, '执行上下文')
+        // iterator为0，走的是_.property，相当于对比第0个元素的大小（属性值为0）
+        assert.deepEqual(_.min([[1], [2, 3], [-1, 4], [5]], 0), [-1, 4], '注意易错的iterator')
+        assert.deepEqual(_.min([{ 0: 1 }, { 0: 2 }, { 0: -1 }, { a: 1 }], 0), { 0: -1 }, '注意易错的iterator')
+    })
+
     QUnit.test('toArray', function (assert) {
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray(_.toArray()), '将arguments转换为数组')
