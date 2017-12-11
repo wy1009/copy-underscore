@@ -271,6 +271,28 @@
     _.max = createComparer(-Infinity)
     _.min = createComparer(Infinity)
 
+    // 返回一个排序好的新数组
+    _.sortBy = function (obj, iteratee, context) {
+        iteratee = cb(iteratee, context)
+        var index = 0
+        return _.pluck(_.map(obj, function (val) {
+            return {
+                val: val,
+                index: index ++,
+                criteria: iteratee(val)
+            }
+        }).sort(function (a, b) {
+            if (a.criteria > b.criteria || a.criteria === void 0) { // 将undefined排在后面
+                return 1
+            }
+            if (a.criteria < b.criteria || b.criteria === void 0) {
+                return -1
+            }
+            // 原本等于0则a和b相对位置不变，ECMAScript不保证这一行为，也不是所有浏览器都会遵守
+            return a.index - b.index
+        }), 'val')
+    }
+
     // 安全创建一个数组
     var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
     _.toArray = function (obj) {

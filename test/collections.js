@@ -537,6 +537,35 @@
         assert.deepEqual(_.min([{ 0: 1 }, { 0: 2 }, { 0: -1 }, { a: 1 }], 0), { 0: -1 }, '注意易错的iterator')
     })
 
+    QUnit.test('sortBy', function (assert) {
+        var people = [{ name: 'curly', age: 50 }, { name: 'moe', age: 30 }]
+        people = _.sortBy(people, function (person) {
+            return person.age
+        })
+        assert.deepEqual(_.pluck(people, 'name'), ['moe', 'curly'], '按年龄排序')
+
+        var list = [void 0, 4, 1, void 0, 3, 2]
+        assert.deepEqual(_.sortBy(list, _.identify), [1, 2, 3, 4, void 0, void 0], '排序undefined')
+
+        list = ['one', 'two', 'three', 'four', 'five']
+        assert.deepEqual(_.sortBy(list, 'length'), ['one', 'two', 'four', 'five', 'three'], '依据长度排序')
+
+        function Pair (x, y) {
+            this.x = x
+            this.y = y
+        }
+        var stableArray = [new Pair(1, 1), new Pair(1, 2), new Pair(1, 3), new Pair(1, 4), new Pair(1, 5), new Pair(1, 6),
+            new Pair(2, 1), new Pair(2, 2), new Pair(2, 3), new Pair(2, 4), new Pair(2, 5), new Pair(2, 6),
+            new Pair(3, 1), new Pair(3, 2), new Pair(3, 3), new Pair(3, 4), new Pair(3, 5), new Pair(3, 6)]
+        assert.deepEqual(_.sortBy(stableArray, function (pair) {
+            return pair.x
+        }), stableArray, 'sortBy对数组稳定')
+        assert.deepEqual(_.sortBy(stableArray, 'x'), stableArray, 'sortBy接受属性字符串')
+
+        list = ['q', 'w', 'e', 'r', 't', 'y']
+        assert.deepEqual(_.sortBy(list), ['e', 'q', 'r', 't', 'w', 'y'], '如果没有规定，_.iterator使用_.identity')
+    })
+
     QUnit.test('toArray', function (assert) {
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray(_.toArray()), '将arguments转换为数组')
