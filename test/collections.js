@@ -566,6 +566,69 @@
         assert.deepEqual(_.sortBy(list), ['e', 'q', 'r', 't', 'w', 'y'], '如果没有规定，_.iterator使用_.identity')
     })
 
+    QUnit.test('groupBy', function (assert) {
+        var parity = _.groupBy([1, 2, 3, 4, 5, 6], function (num) {
+            return num % 2
+        })
+        assert.ok('0' in parity && '1' in parity, '为每个value创建组')
+        assert.deepEqual(parity[0], [2, 4, 6], '把偶数放在了正确的组里')
+
+        var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'],
+            grouped = _.groupBy(list, 'length')
+        assert.deepEqual(grouped['3'], ['one', 'two', 'six', 'ten'])
+        assert.deepEqual(grouped['4'], ['four', 'five', 'nine'])
+        assert.deepEqual(grouped['5'], ['three', 'seven', 'eight'])
+
+        var context = {}
+        _.groupBy([{}], function () {
+            assert.strictEqual(this, context)
+        }, context)
+
+        grouped = _.groupBy([4.2, 6.1, 6.4], function (num) {
+            return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor'
+        })
+        assert.strictEqual(grouped.constructor.length, 1)
+        assert.strictEqual(grouped.hasOwnProperty.length, 2)
+
+        var array = [{}]
+        _.groupBy(array, function (val, index, obj) {
+            assert.strictEqual(obj, array)
+        })
+
+        array = [1, 2, 1, 2, 3]
+        grouped = _.groupBy(array)
+        assert.strictEqual(grouped['1'].length, 2)
+        assert.strictEqual(grouped['3'].length, 1)
+
+        var matrix = [[1, 2], [1, 3], [2, 3]]
+        assert.deepEqual(_.groupBy(matrix, 0), { 1: [[1, 2], [1, 3]], 2: [[2, 3]] })
+        assert.deepEqual(_.groupBy(matrix, 1), { 2: [[1, 2]], 3: [[1, 3], [2, 3]] })
+
+        var liz = { name: 'Liz', status: { power: 10 } },
+            chelsea = { name: 'Chelsea', status: { power: 10 } },
+            jordan = { name: 'Jordan', status: { power: 6 } },
+            collection = [liz, chelsea, jordan]
+        assert.deepEqual(_.groupBy(collection, ['status', 'power']), { 10: [liz, chelsea], 6: [jordan] }, '可以用深属性分组')
+    })
+
+    QUnit.test('indexBy', function (assert) {
+        var parity = _.indexBy([1, 2, 3, 4, 5], function (num) { return num % 2 === 0; })
+        assert.strictEqual(parity['true'], 4)
+        assert.strictEqual(parity['false'], 5)
+    
+        var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+        var grouped = _.indexBy(list, 'length')
+        assert.strictEqual(grouped['3'], 'ten')
+        assert.strictEqual(grouped['4'], 'nine')
+        assert.strictEqual(grouped['5'], 'eight')
+    
+        var array = [1, 2, 1, 2, 3]
+        grouped = _.indexBy(array)
+        assert.strictEqual(grouped['1'], 1)
+        assert.strictEqual(grouped['2'], 2)
+        assert.strictEqual(grouped['3'], 3)
+    })
+
     QUnit.test('toArray', function (assert) {
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray(_.toArray()), '将arguments转换为数组')

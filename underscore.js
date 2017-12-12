@@ -293,6 +293,31 @@
         }), 'val')
     }
 
+    var group = function (behavior) {
+        return function (obj, iteratee, context) {
+            iteratee = cb(iteratee, context)
+            var result = {}
+            _.each(obj, function (val, index) {
+                var key = iteratee(val, index, obj)
+                behavior(result, val, key)
+            })
+            return result
+        }
+    }
+
+    // 依照iteratee的结果分组
+    _.groupBy = group(function (result, val, key) {
+        if (!_.has(result, key)) {
+            result[key] = []
+        }
+        result[key].push(val)
+    })
+
+    // 同groupBy，确定每个索引只有一个值的时候可以用，同索引后面的值覆盖前面的
+    _.indexBy = group(function (result, val, key) {
+        result[key] = val
+    })
+
     // 安全创建一个数组
     var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
     _.toArray = function (obj) {
