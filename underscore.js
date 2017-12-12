@@ -426,6 +426,25 @@
     // 返回array-like中通过断言测试的最后一个index
     _.findLastIndex = createPredicateIndexFinder(-1)
 
+    // 创建整数数组
+    _.range = function (start, stop, step) {
+        if (stop === null || stop === void 0) {
+            stop = start
+            start = 0
+        }
+        if (!step) {
+            step = stop > start ? 1 : -1
+        }
+        var length = Math.max(Math.ceil((stop - start) / step), 0),
+            result = Array(length),
+            val = start
+        for (var i = 0; i < length; i ++) {
+            result[i] = val
+            val += step
+        }
+        return result
+    }
+
     // Functions - 函数
 
     var executeBound = function (sourceFn, boundFn, callingContext, args) {

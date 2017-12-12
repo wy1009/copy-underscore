@@ -146,7 +146,7 @@
         num = 40
         assert.strictEqual(_.indexOf(numbers, num, true), 1, '40在列表中')
         assert.strictEqual(_.indexOf(numbers, 6, true), -1, '6不在列表中')
-        assert.strictEqual(_.indexOf([1, 2, 5, 4, 6, 7], 5, true), -1, '非有序数组传入true会导致查找错误');
+        assert.strictEqual(_.indexOf([1, 2, 5, 4, 6, 7], 5, true), -1, '非有序数组传入true会导致查找错误')
         assert.ok(_.every(['1', [], {}, null], function () {
             return _.indexOf(numbers, num, {}) === 1
         }))
@@ -216,5 +216,18 @@
         assert.deepEqual(_.map([-6, -8, -Infinity], function (fromIndex) {
             return _.lastIndexOf(numbers, 1, fromIndex)
         }), [0, -1, -1])
+    })
+
+    QUnit.test('range', function (assert) {
+        assert.deepEqual(_.range(0), [], '唯一参数0，range返回空数组')
+        assert.deepEqual(_.range(4), [0, 1, 2, 3], '单一正参数，range生成0...n-1')
+        assert.deepEqual(_.range(5, 8), [5, 6, 7], '两个参数a&b，a<b，生成a...b-1')
+        assert.deepEqual(_.range(3, 10, 3), [3, 6, 9], '三个参数a&b&c，c<b-a，a<b，生成a,a+c...b-(n*a)<c')
+        assert.deepEqual(_.range(3, 10, 15), [3], '三个参数a&b&c，c>b-a，a<b，生成只包含一个元素的数组，元素等于a')
+        assert.deepEqual(_.range(12, 7, -2), [12, 10, 8], '三个参数a&b&c，a>b，c<0，生成数组a,a-c,a-2c...以不小于b的数字结束')
+        assert.deepEqual(_.range(0, -10, -1), [0, -1, -2, -3, -4, -5, -6, -7, -8, -9])
+        assert.strictEqual(1 / _.range(-0, 1)[0], -Infinity)
+        assert.deepEqual(_.range(8, 5), [8, 7, 6], 'stop>start则倒数')
+        assert.deepEqual(_.range(-3), [0, -1, -2], 'stop>start则倒数，默认start不例外')
     })
 })()
