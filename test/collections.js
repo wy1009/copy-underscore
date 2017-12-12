@@ -475,6 +475,7 @@
         assert.strictEqual(-Infinity, _.max({}), '空对象')
         assert.strictEqual(-Infinity, _.max([]), '空数组')
         assert.strictEqual(_.max({ a: 'a' }), -Infinity, '不是数字集合的最大值')
+        assert.strictEqual(_.max(_.range(1, 300000)), 299999, '超大数组的最大值')
         assert.strictEqual(_.max([1, 2, 3, 'test']), 3, '以数字开头包含NaN的数组')
         assert.strictEqual(_.max(['test', 1, 2, 3]), 3, '以NaN开头的数组')
         assert.strictEqual(_.max([1, 2, 3, null]), 3, '以数字开头包含null的数组')
@@ -521,6 +522,11 @@
         assert.strictEqual(_.min([null, 1, 2, 3]), 1, '以null开头的数组')
         assert.strictEqual(_.min([0, 1, 2, 3, 4]), 0, '包含0的数组')
         assert.strictEqual(_.min([-3, -2, -1, 0]), -3, '包含负数的数组')
+        assert.strictEqual(_.min(_.range(1, 300000)), 1, '超大数组的最小值')
+
+        var now = new Date(9999999999)
+        var then = new Date(0)
+        assert.strictEqual(_.min([now, then]), then)
 
         var a = { x: Infinity },
             b = { x: Infinity },
