@@ -215,6 +215,21 @@
         assert.deepEqual(result, { a: 1, 0: 1, 1: 2, length: 2 }, '处理array-like对象应像普通对象一样')
     })
 
+    QUnit.test('clone', function (assert) {
+        var moe = { name: 'moe', lucky: [13, 27, 34] }
+        var clone = _.clone(moe)
+        assert.strictEqual(clone.name, 'moe')
+    
+        clone.name = 'curly'
+        assert.ok(clone.name === 'curly' && moe.name === 'moe', '克隆体可以更改浅属性，不影响本体')
+    
+        clone.lucky.push(101)
+    
+        assert.strictEqual(_.clone(void 0), void 0, '原始类型不会被改变')
+        assert.strictEqual(_.clone(1), 1, '原始类型不会被改变')
+        assert.strictEqual(_.clone(null), null, '原始类型不会被改变')
+    })
+
     QUnit.test('isMatch', function (assert) {
         var moe = { name: 'Moe Howard', hair: true },
             curly = { name: 'Curly Howard', hair: false }

@@ -585,6 +585,15 @@
     // 只复制自己的属性覆盖到目标对象，不包括原型链上的可枚举属性
     _.extendOwn = createAssigner(_.keys)
 
+    // 浅复制的克隆obj
+    _.clone = function (obj) {
+        // 不是引用类型
+        if (!_.isObject(obj)) {
+            return obj
+        }
+        return _.isArray(obj) ? obj.slice() : _.extend({}, obj)
+    }
+
     // 检查一个对象中是否直接在它本身有某个属性，换句话说，不是原型属性
     _.has = function (obj, path) {
         if (!_.isArray(path)) {
