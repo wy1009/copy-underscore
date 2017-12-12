@@ -629,6 +629,35 @@
         assert.strictEqual(grouped['3'], 3)
     })
 
+    QUnit.test('countBy', function (assert) {
+        var parity = _.countBy([1, 2, 3, 4, 5], function (num) { return num % 2 === 0; })
+        assert.strictEqual(parity['true'], 2)
+        assert.strictEqual(parity['false'], 3)
+    
+        var list = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten']
+        var grouped = _.countBy(list, 'length')
+        assert.strictEqual(grouped['3'], 4)
+        assert.strictEqual(grouped['4'], 3)
+        assert.strictEqual(grouped['5'], 3)
+    
+        var context = {}
+        _.countBy([{}], function () { assert.strictEqual(this, context) }, context)
+    
+        grouped = _.countBy([4.2, 6.1, 6.4], function (num) {
+          return Math.floor(num) > 4 ? 'hasOwnProperty' : 'constructor'
+        })
+        assert.strictEqual(grouped.constructor, 1)
+        assert.strictEqual(grouped.hasOwnProperty, 2)
+    
+        var array = [{}]
+        _.countBy(array, function (value, index, obj) { assert.strictEqual(obj, array) })
+    
+        array = [1, 2, 1, 2, 3]
+        grouped = _.countBy(array)
+        assert.strictEqual(grouped['1'], 2)
+        assert.strictEqual(grouped['3'], 1)
+    })
+
     QUnit.test('toArray', function (assert) {
         assert.notOk(_.isArray(arguments), 'arguments不是数组')
         assert.ok(_.isArray(_.toArray()), '将arguments转换为数组')

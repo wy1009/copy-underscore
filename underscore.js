@@ -313,9 +313,18 @@
         result[key].push(val)
     })
 
-    // 同groupBy，确定每个索引只有一个值的时候可以用，同索引后面的值覆盖前面的
+    // 类似groupBy，确定每个索引只有一个值的时候可以用，同索引后面的值覆盖前面的
     _.indexBy = group(function (result, val, key) {
         result[key] = val
+    })
+
+    // 类似groupBy，返回的不是该组的值，而是该组中值的数目
+    _.countBy = group(function (result, val, key) {
+        if (!_.has(result, key)) {
+            result[key] = 1
+        } else {
+            result[key] ++
+        }
     })
 
     // 安全创建一个数组
