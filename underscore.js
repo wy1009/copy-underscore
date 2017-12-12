@@ -30,7 +30,7 @@
         // 但其实，undefined和null被放入最后一步作为对象取值路径处理也不会出错，也可以被作为属性名，被处理为字符串
         // 即obj[null] === obj['null']
         if (val === void 0 || val === null) {
-            return _.identify
+            return _.identity
         }
         if (_.isObject(val) && !_.isArray(val)) {
             return _.matcher(val)
@@ -339,7 +339,7 @@
         if (_.isString(obj)) {
             return obj.match(reStrSymbol)
         }
-        // 不知道原代码为什么要专门对array-like对象加一个_.map(obj, _.identify)的写法
+        // 不知道原代码为什么要专门对array-like对象加一个_.map(obj, _.identity)的写法
         // 不这样写同样可以通过所有的测试用例
         return _.values(obj)
     }
@@ -678,7 +678,7 @@
     // Utility - 实用功能
 
     // 返回与传入参数相等的值的函数。在underscore中被作为默认的迭代器。
-    _.identify = function (val) {
+    _.identity = function (val) {
         return val
     }
 
@@ -691,4 +691,13 @@
 
     // 默认可选的回调函数
     _.noop = function () {}
+
+    // 生成min和max之间的随机整数，包括min和max。如果只传一个参数，则返回0到这个参数之间的整数
+    _.random = function (min, max) {
+        if (max === null || max === void 0) {
+            max = min
+            min = 0
+        }
+        return Math.floor(Math.ramdom() * (max - min + 1)) + min
+    }
 })()
