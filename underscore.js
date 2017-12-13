@@ -5,7 +5,7 @@
         if (!(this instanceof _)) {
             return new _(obj)
         }
-        this._wrapper = obj
+        this._wrapped = obj
     }
 
     root._ = _
@@ -766,19 +766,37 @@
         return Math.floor(Math.random() * (max - min + 1)) + min
     }
 
+    // 返回一个封装的对象，在封装的对象上调用方法会返回封装对象本身，直到value()方法调用为止
+    _.chain = function (obj) {
+        obj = _(obj)
+        obj._chain = true
+        return obj
+    }
+
+    // 根据instance中_chain属性的值，决定是否处于链式调用中，从而决定是否需要将函数返回的obj继续包装为一个实例
+    // 包装方法实际上就是创建一个_实例，其中_wrapped属性等于该对象
+    var chainResult = function (instance, obj) {
+        instance._chain ? _.chain(obj) : obj
+    }
+
     // 将自己的方法扩展到Underscore，传递一个{ name: function }定义的哈希添加到Underscore对象，以及面向对象封装
     _.mixin = function (obj) {
         _.each(_.functions(obj), function (name) {
             var func = _[name] = obj[name]
             // 共有两种调用方式，_.xx或_().xx，前者直接调用_上的方法，只有后者才会调用prototype上的方法
             _.prototype[name] = function () {
-                var args = [this._wrapper]
+                var args = [this._wrapped]
                 args.push(arguments)
-                return func.apply(_, args)
+                return chainResult(this, func.apply(_, args))
             }
         })
         return _
     }
 
     _.mixin(_)
+
+    // 获取封装对象的最终值
+    _.prototype.value = function () {
+        return this._wrapped
+    }
 })()
