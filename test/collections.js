@@ -672,7 +672,7 @@
         assert.notStrictEqual(numbers, shuffled, '引用地址也不同')
         assert.deepEqual(_.sortBy(shuffled), numbers, '在乱序前后包含相同的成员')
     
-        shuffled = _.shuffle({a: 1, b: 2, c: 3, d: 4})
+        shuffled = _.shuffle({ a: 1, b: 2, c: 3, d: 4 })
         assert.strictEqual(shuffled.length, 4)
         assert.deepEqual(shuffled.sort(), [1, 2, 3, 4], '对object生效')
     })
@@ -724,7 +724,7 @@
         assert.strictEqual(_.size([1, 2, 3]), 3, '可以计算数组的长度')
         assert.strictEqual(_.size({length: 3, 0: 0, 1: 0, 2: 0}), 3, '可以计算array-like的长度')
 
-        var func = function() {
+        var func = function () {
             return _.size(arguments)
         }
         assert.strictEqual(func(1, 2, 3, 4), 4, '可以计算arguments的长度')
@@ -734,5 +734,34 @@
 
         assert.strictEqual(_.size(null), 0, '支持null')
         assert.strictEqual(_.size(0), 0, '支持数字')
+    })
+
+    QUnit.test('partition', function (assert) {
+        var list = [0, 1, 2, 3, 4, 5]
+        assert.deepEqual(_.partition(list, function (x) { return x < 4 }), [[0, 1, 2, 3], [4, 5]], '支持布尔返回值')
+        assert.deepEqual(_.partition(list, function (x) { return x & 1 }), [[1, 3, 5], [0, 2, 4]], '支持0和1返回值')
+        assert.deepEqual(_.partition(list, function (x) { return x - 3 }), [[0, 1, 2, 4, 5], [3]], '支持其他数字的返回值')
+        assert.deepEqual(_.partition(list, function (x) { return x > 1 ? null : true }), [[0, 1], [2, 3, 4, 5]], '支持null返回值')
+        assert.deepEqual(_.partition(list, function (x) { if (x < 2) return true }), [[0, 1], [2, 3, 4, 5]], '支持undefined返回值')
+        assert.deepEqual(_.partition({ a: 1, b: 2, c: 3 }, function (x) { return x > 1 }), [[2, 3], [1]], '支持对象')
+        assert.deepEqual(_.partition(list, function (x, index) { return index % 2 }), [[1, 3, 5], [0, 2, 4]], '可以得到数组index')
+        assert.deepEqual(_.partition(list, function (x, index, arr) { return x === arr.length - 1 }), [[5], [0, 1, 2, 3, 4]], '可以得到集合')
+        // 默认迭代器
+        assert.deepEqual(_.partition([1, false, true, '']), [[1, true], [false, '']], '默认迭代器')
+        assert.deepEqual(_.partition([{ x: 1 }, { x: 0 }, { x: 1 }], 'x'), [[{ x: 1 }, { x: 1 }], [{ x: 0 }]], '传入字符串')
+    
+        // 执行上下文
+        var predicate = function (x) { return x === this.x }
+        assert.deepEqual(_.partition([1, 2, 3], predicate, { x: 2 }), [[2], [1, 3]], '传入执行上下文参数')
+    
+        assert.deepEqual(_.partition([{ a: 1 }, { b: 2 }, { a: 1, b: 2 }], { a: 1 }), [[{ a: 1 }, { a: 1, b: 2 }], [{ b: 2 }]], '断言函数可以是object')
+    
+        var object = { a: 1 }
+        _.partition(object, function (val, key, obj) {
+          assert.strictEqual(val, 1)
+          assert.strictEqual(key, 'a')
+          assert.strictEqual(obj, object)
+          assert.strictEqual(this, predicate)
+        }, predicate)
     })
 })()

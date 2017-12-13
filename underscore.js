@@ -381,6 +381,20 @@
         return isArrayLike(obj) ? obj.length : _.keys(obj).length
     }
 
+    // 拆分对象为两个数组，第一个数组其元素都满足predicate迭代函数，第二个数组其元素均不能满足predicate
+    _.partition = function (obj, predicate, context) {
+        predicate = cb(predicate, context)
+        var result = [[], []]
+        _.each(obj, function (val, index) {
+            if (predicate(val, index, obj)) {
+                result[0].push(val)
+            } else {
+                result[1].push(val)
+            }
+        })
+        return result
+    }
+
     // Arrays - 数组
 
     // 二分法查找能插入值的最小index
