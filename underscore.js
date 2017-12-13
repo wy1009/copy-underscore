@@ -138,6 +138,7 @@
         }
     }
 
+    // 把list中的元素归结为一个单独的值，memo是初始值，会被每一次成功调用iteratee函数的返回值所取代
     _.reduce = _.foldl = _.inject = createReducer(1)
     _.reduceRight = _.foldr = createReducer(-1)
 
@@ -326,6 +327,29 @@
             result[key] ++
         }
     })
+
+    // 从list中产生一个随机副本。不传n则返回单一随机项，传则从list中返回n个随机数。
+    _.sample = function (obj, n) {
+        if (n === null || n === void 0) {
+            if (!isArrayLike(obj)) {
+                obj = _.values(obj)
+            }
+            return obj[_.random(obj.length - 1)]
+        }
+        obj = isArrayLike(obj) ? _.clone(obj) : _.values(obj)
+        var length = getLength(obj)
+        // 防止负数n和n > length的情况
+        n = Math.max(Math.min(length, n), 0)
+        // 做法好聪明，把取到的随机值与开头的值挨个交换，下次随机跳过开头
+        // 既保证取值不重复，又能够直接将取到的值汇总到开头，直接截取开头返回
+        for (var i = 0; i < n; i ++) {
+            var rand = _.random(i, length - 1),
+                tmp = obj[rand]
+            obj[rand] = obj[i]
+            obj[i] = tmp
+        }
+        return obj.slice(0, n)
+    }
 
     // 安全创建一个数组
     var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;

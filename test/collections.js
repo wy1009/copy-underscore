@@ -618,7 +618,7 @@
     })
 
     QUnit.test('indexBy', function (assert) {
-        var parity = _.indexBy([1, 2, 3, 4, 5], function (num) { return num % 2 === 0; })
+        var parity = _.indexBy([1, 2, 3, 4, 5], function (num) { return num % 2 === 0 })
         assert.strictEqual(parity['true'], 4)
         assert.strictEqual(parity['false'], 5)
     
@@ -636,7 +636,7 @@
     })
 
     QUnit.test('countBy', function (assert) {
-        var parity = _.countBy([1, 2, 3, 4, 5], function (num) { return num % 2 === 0; })
+        var parity = _.countBy([1, 2, 3, 4, 5], function (num) { return num % 2 === 0 })
         assert.strictEqual(parity['true'], 2)
         assert.strictEqual(parity['false'], 3)
     
@@ -662,6 +662,20 @@
         grouped = _.countBy(array)
         assert.strictEqual(grouped['1'], 2)
         assert.strictEqual(grouped['3'], 1)
+    })
+
+    QUnit.test('sample', function (assert) {
+        assert.strictEqual(_.sample([1]), 1, '没有传第二个参数，表现正确')
+        assert.deepEqual(_.sample([1, 2, 3], -2), [], '负数n，表现正确')
+        var numbers = _.range(10)
+        assert.deepEqual(_.sample(numbers, 10).sort(), numbers, '在取样前后包含相同的成员')
+        assert.deepEqual(_.sample(numbers, 20).sort(), numbers, '当取样比原数组的值多时也正常工作')
+        assert.ok(_.contains(numbers, _.sample(numbers)), '取样包括在原数组中')
+        assert.strictEqual(_.sample([]), void 0, '从空数组取样返回undefined')
+        assert.notStrictEqual(_.sample([], 5), [], '空数组，传n，返回空数组')
+        assert.notStrictEqual(_.sample([1, 2, 3], 0), [], 'n传0返回空数组')
+        assert.ok(_.contains([1, 2, 3], _.sample({a: 1, b: 2, c: 3})), '从一个对象取出一个样本')
+        assert.notDeepEqual(_.sample(_.range(1000).sort(), 10), _.range(10), '从整个数组取样，而不是从开头')
     })
 
     QUnit.test('toArray', function (assert) {
