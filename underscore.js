@@ -328,6 +328,14 @@
         }
     })
 
+    // 返回一个乱序列表副本
+    _.shuffle = function (obj) {
+        if (!isArrayLike(obj)) {
+            obj = _.values(obj)
+        }
+        return _.sample(obj, obj.length)
+    }
+
     // 从list中产生一个随机副本。不传n则返回单一随机项，传则从list中返回n个随机数。
     _.sample = function (obj, n) {
         if (n === null || n === void 0) {

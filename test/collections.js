@@ -664,6 +664,19 @@
         assert.strictEqual(grouped['3'], 1)
     })
 
+    QUnit.test('shuffle', function (assert) {
+        assert.deepEqual(_.shuffle([1]), [1], '长度为一的数组，表现正确')
+        var numbers = _.range(20)
+        var shuffled = _.sample(numbers, 20)
+        assert.notDeepEqual(numbers, shuffled, '改变了顺序')
+        assert.notStrictEqual(numbers, shuffled, '引用地址也不同')
+        assert.deepEqual(_.sortBy(shuffled), numbers, '在乱序前后包含相同的成员')
+    
+        shuffled = _.shuffle({a: 1, b: 2, c: 3, d: 4})
+        assert.strictEqual(shuffled.length, 4)
+        assert.deepEqual(shuffled.sort(), [1, 2, 3, 4], '对object生效')
+    })
+
     QUnit.test('sample', function (assert) {
         assert.strictEqual(_.sample([1]), 1, '没有传第二个参数，表现正确')
         assert.deepEqual(_.sample([1, 2, 3], -2), [], '负数n，表现正确')
