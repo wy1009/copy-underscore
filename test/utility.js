@@ -26,4 +26,15 @@
             return _.random(Number.MAX_VALUE) > 0
         }), '应该生成一个大于零的随机数')
     })
+
+    QUnit.test('mixin', function (assert) {
+        var ret = _.mixin({
+            myReverse: function (string) {
+                return string.split('').reverse().join('')
+            }
+        })
+        assert.strictEqual(ret, _, '返回_对象帮助链式语法')
+        assert.strictEqual(_.myReverse('panacea'), 'aecanap', '向_对象上混合了一个函数')
+        assert.strictEqual(_('champ').myReverse(), 'pmahc', '也像_对象的原型上混合了这个方法')
+    })
 })()

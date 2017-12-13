@@ -1,8 +1,11 @@
 ;(function () {
     let root = typeof self === 'object' && self.self === self && self || {}
 
-    var _ = function () {
-
+    var _ = function (obj) {
+        if (!(this instanceof _)) {
+            return new _(obj)
+        }
+        this._wrapper = obj
     }
 
     root._ = _
@@ -762,4 +765,20 @@
         }
         return Math.floor(Math.random() * (max - min + 1)) + min
     }
+
+    // 将自己的方法扩展到Underscore，传递一个{ name: function }定义的哈希添加到Underscore对象，以及面向对象封装
+    _.mixin = function (obj) {
+        _.each(_.functions(obj), function (name) {
+            var func = _[name] = obj[name]
+            // 共有两种调用方式，_.xx或_().xx，前者直接调用_上的方法，只有后者才会调用prototype上的方法
+            _.prototype[name] = function () {
+                var args = [this._wrapper]
+                args.push(arguments)
+                return func.apply(_, args)
+            }
+        })
+        return _
+    }
+
+    _.mixin(_)
 })()
