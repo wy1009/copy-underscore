@@ -77,7 +77,7 @@
     var shallowProperty = function (key) {
         return function (obj) {
             // 用void 0代替undefined，防止undefined被重写
-            return !obj ? void 0 : obj[key]
+            return obj === null || obj === void 0 ? void 0 : obj[key]
         }
     }
 
@@ -374,6 +374,11 @@
         // 不知道原代码为什么要专门对array-like对象加一个_.map(obj, _.identity)的写法
         // 不这样写同样可以通过所有的测试用例
         return _.values(obj)
+    }
+
+    // 列表的长度
+    _.size = function (obj) {
+        return isArrayLike(obj) ? obj.length : _.keys(obj).length
     }
 
     // Arrays - 数组

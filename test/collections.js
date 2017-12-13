@@ -718,4 +718,21 @@
             assert.deepEqual(actual, _.map(document.childNodes, _.identify), '对NodeList有用')
         }
     })
+
+    QUnit.test('size', function (assert) {
+        assert.strictEqual(_.size({one: 1, two: 2, three: 3}), 3, '可以计算对象的长度')
+        assert.strictEqual(_.size([1, 2, 3]), 3, '可以计算数组的长度')
+        assert.strictEqual(_.size({length: 3, 0: 0, 1: 0, 2: 0}), 3, '可以计算array-like的长度')
+
+        var func = function() {
+            return _.size(arguments)
+        }
+        assert.strictEqual(func(1, 2, 3, 4), 4, '可以计算arguments的长度')
+
+        assert.strictEqual(_.size('hello'), 5, '可以计算字符串的长度')
+        assert.strictEqual(_.size(new String('hello')), 5, '可以计算字符串数组的长度')
+
+        assert.strictEqual(_.size(null), 0, '支持null')
+        assert.strictEqual(_.size(0), 0, '支持数字')
+    })
 })()
