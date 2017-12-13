@@ -294,10 +294,10 @@
         }), 'val')
     }
 
-    var group = function (behavior) {
+    var group = function (behavior, partition) {
         return function (obj, iteratee, context) {
             iteratee = cb(iteratee, context)
-            var result = {}
+            var result = partition ? [[], []] : {}
             _.each(obj, function (val, index) {
                 var key = iteratee(val, index, obj)
                 behavior(result, val, key)
@@ -382,18 +382,9 @@
     }
 
     // 拆分对象为两个数组，第一个数组其元素都满足predicate迭代函数，第二个数组其元素均不能满足predicate
-    _.partition = function (obj, predicate, context) {
-        predicate = cb(predicate, context)
-        var result = [[], []]
-        _.each(obj, function (val, index) {
-            if (predicate(val, index, obj)) {
-                result[0].push(val)
-            } else {
-                result[1].push(val)
-            }
-        })
-        return result
-    }
+    _.partition = group(function (result, val, pass) {
+        result[pass ? 0 : 1].push(val)
+    }, true)
 
     // Arrays - 数组
 
