@@ -50,8 +50,8 @@
                 rest[i] = arguments[i + startIndex]
             }
             switch (startIndex) {
-                case 1: return func.call(this, arguments[0], rest); break;
-                case 2: return func.call(this, arguments[0], arguments[1], rest); break;
+                case 1: return func.call(this, arguments[0], rest); break
+                case 2: return func.call(this, arguments[0], arguments[1], rest); break
             }
         }
     }
@@ -360,7 +360,7 @@
     }
 
     // 安全创建一个数组
-    var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
+    var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g
     _.toArray = function (obj) {
         if (!obj) {
             return []
@@ -589,6 +589,17 @@
             values.push(obj[keys[i]])
         }
         return values
+    }
+
+    // 返回一个对象中所有的方法名，且排序
+    _.functions = _.methods = function (obj) {
+        var names = []
+        for (var key in obj) {
+            if (_.isFunction(obj[key])) {
+                names.push(key)
+            }
+        }
+        return names.sort()
     }
 
     // 返回对象中第一个通过断言测试的key

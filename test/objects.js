@@ -73,84 +73,53 @@
         assert.deepEqual(_.allKeys(b).sort(), ['bar', 'foo'], '应该包括继承的key')
     })
 
-    QUnit.test('isObject', function (assert) {
-        assert.ok(_.isObject(arguments), 'arguments是object')
-        assert.ok(_.isObject([1, 2, 3]), '数组是object')
-        if (testElement) {
-            assert.ok(_.isObject(testElement), 'DOM元素是对象')
-        }
-        assert.ok(_.isObject(_.noop), '函数是对象')
-        assert.notOk(_.isObject(null), 'null不是对象')
-        assert.notOk(_.isObject(void 0), 'undefined不是对象')
-        assert.notOk(_.isObject('string'), 'string不是对象')
-        assert.notOk(_.isObject(12), 'number不是对象')
-        assert.notOk(_.isObject(true), 'true不是对象')
-        // new新建实例对象，因此是一个对象
-        assert.ok(_.isObject(new String()), 'new String()是对象')
-    })
-
-    QUnit.test('has', function (assert) {
-        var obj = {
-            foo: 'bar',
-            func: function () {}
-        }
-        assert.ok(_.has(obj, 'foo'), '检查obj中有一个属性')
-        assert.notOk(_.has(obj, 'baz'), '没有该属性则返回false')
-        assert.ok(_.has(obj, 'func'))
-        obj.hasOwnProperty = null
-        assert.ok(_.has(obj, 'foo'), '在hasOwnProperty方法被删除后已经奏效，因为采用了借用原型方法的写法')
-
-        function Child () {}
-        Child.prototype = obj
-        var child = new Child()
-        // 原代码测试用例好像写错了，`var child = {}; child.prototype = obj`并不意味着obj在child的原型链上，只是为child新增了一个名叫“prototype”的属性
-        assert.notOk(_.has(child, 'foo'), '原型链上的属性不会被检测出')
-        assert.strictEqual(_.has(null, 'foo'), false, '在检测null时return false')
-        assert.strictEqual(_.has(void 0, 'foo'), false, '在检测undefined时return false')
-        assert.ok(_.has({ a: { b: 'c' } }, ['a', 'b']), true, '可以检测嵌套属性')
-        assert.notOk(_.has({ a: child }), ['a', 'foo'], '不会检测嵌套属性的prototype')
-    })
-
-    QUnit.test('isArray', function (assert) {
-        assert.notOk(_.isArray(void 0), 'undefined不是数组')
-        assert.notOk(_.isArray(arguments), 'arguments不是数组')
-        assert.ok(_.isArray([1, 2, 3]), '可以检测数组')
-    })
-
-    QUnit.test('isFunction', function (assert) {
-        assert.notOk(_.isFunction(void 0), 'undefined不是函数')
-        assert.notOk(_.isFunction([1, 2, 3]), '数组不是函数')
-        assert.notOk(_.isFunction('moe'), '字符串不是函数')
-        assert.ok(_.isFunction(_.isFunction), '函数是函数')
-        assert.ok(_.isFunction(function () {}), '匿名函数是函数')
-
-        testElement && assert.notOk(_.isFunction(testElement), '元素不是函数')
-
-        var nodeList = typeof document !== 'undefined' && document.childNodes
-        nodeList && assert.notOk(_.isFunction(nodeList))
-    })
-
     QUnit.test('valus', function (assert) {
         assert.deepEqual(_.values({ one: 1, two: 2 }), [1, 2])
         assert.deepEqual(_.values({ one: 1, two: 2, length: 3 }), [1, 2, 3])
     })
 
-    QUnit.test('property', function (assert) {
-        var stooge = {
-            name: 'moe',
-            null: 'nullVal',
-            undefined: 'undefinedVal'
+    QUnit.test('functions', function (assert) {
+        var obj = { a: 'dash', b: _.map, c: /yo/, d: _.reduce }
+        assert.deepEqual(['b', 'd'], _.functions(obj), '可以获得传入对象的方法名')
+    
+        var Animal = function () {}
+        Animal.prototype.run = function () {}
+        assert.deepEqual(_.functions(new Animal), ['run'], '也会注意原型上的方法')
+    })
+
+    QUnit.test('findKey', function (assert) {
+        var objs = {
+            a: { a: 0, b: 0 },
+            b: { a: 1, b: 1 },
+            c: { a: 2, b: 2 }
         }
-        assert.strictEqual(_.property('name')(stooge), 'moe', '应返回给出名字的属性')
-        assert.strictEqual(_.property('name')(null), void 0, '应为null对象的name属性返回undefined')
-        assert.strictEqual(_.property('name')(void 0), void 0, '应为undefined对象的name属性返回undefined')
-        // 原例默认stooge[null] === undefined，可是null也能作为属性名（会被处理为字符串，即stooge[null] === stooge['null']）
-        assert.strictEqual(_.property(null)(stooge), 'nullVal', '应为stooge对象的null属性返回undefined')
-        assert.strictEqual(_.property('x')({ x: null }), null, '可以返回null属性值')
-        assert.strictEqual(_.property(['a', 'b'])({ a: { b: 2 } }), 2, '可以获取嵌套属性')
-        assert.strictEqual(_.property(['a'])({ a: false }), false, '可以获取false值')
-        assert.strictEqual(_.property(['a', 'b'])({ a: { b: null } }), null, '可以获取嵌套属性的null值')
-        assert.strictEqual(_.property([])({ x: 'y' }), void 0, '获取路径为空数组时返回undefined')
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.a === 0
+        }), 'a')
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.b * obj.a === 4
+        }), 'c')
+        assert.strictEqual(_.findKey(objs, 'a'), 'b')
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.b * obj.a === 5
+        }), void 0)
+        assert.strictEqual(_.findKey([1, 2, 3, 4, 5, 6], function (obj) {
+            return obj === 3
+        }), '2', '对array生效')
+        assert.strictEqual(_.findKey(objs, function (obj) {
+            return obj.foo === null
+        }), void 0)
+        _.findKey({ a: { a: 1 } }, function (val, key, obj) {
+            assert.strictEqual(key, 'a')
+            assert.deepEqual(obj, { a: { a: 1 } })
+            assert.strictEqual(this, objs, '执行上下文')
+        }, objs)
+
+        var arr = [1, 2, 3]
+        arr.match = 55
+        assert.strictEqual(_.findKey(arr, function (x) {
+            return x === 55
+        }), 'match', '匹配array-like的key') // arr -> [ 0: 1, 1: 2, 2: 3, match: 55, length: 3 ]
     })
 
     QUnit.test('extend', function (assert) {
@@ -230,78 +199,26 @@
         assert.strictEqual(_.clone(null), null, '原始类型不会被改变')
     })
 
-    QUnit.test('isMatch', function (assert) {
-        var moe = { name: 'Moe Howard', hair: true },
-            curly = { name: 'Curly Howard', hair: false }
-        assert.strictEqual(_.isMatch(moe, { hair: true }), true)
-        assert.strictEqual(_.isMatch(curly, { hair: true }), false)
-        assert.strictEqual(_.isMatch(5, { __x__: void 0 }), false, '可以在原始类型上匹配undefined属性值')
-        assert.strictEqual(_.isMatch({ __x__: void 0 }, { __x__: void 0 }), true, '可以匹配undefined属性值')
-        assert.strictEqual(_.isMatch(null, {}), true)
-        assert.strictEqual(_.isMatch(null, { a: 1 }), false)
-
-        _.each([null, void 0], function (item) {
-            assert.strictEqual(_.isMatch(item, null), true, 'null匹配null')
-        })
-        _.each([null, void 0], function (item) {
-            assert.strictEqual(_.isMatch(item, {}), true, '{}匹配null')
-        })
-        assert.strictEqual(_.isMatch({ b: 1 }, { a: void 0 }), false)
-        _.each([true, 5, NaN, null, void 0], function (item) {
-            assert.strictEqual(_.isMatch({ a: 1 }, item), true, '将原始值当做空来处理')
-        })
-
-        function F () {}
-        F.prototype.x = 1
-        var subObj = new F()
-        assert.strictEqual(_.isMatch({ x: 2 }, subObj), true, '需要查找的对象，其属性不包括原型属性')
-        subObj.y = 5
-        assert.strictEqual(_.isMatch({ x: 1, y: 5 }, subObj), true)
-        assert.strictEqual(_.isMatch({ x: 1, y: 4 }, subObj), false)
-        assert.ok(_.isMatch(subObj, { x: 1, y: 5 }), true, '但是被检测的对象，被检测属性包括原型属性')
-        F.x = 5
-        assert.ok(_.isMatch({ x: 5, y: 1 }, F), '需要查找的对象可以是一个函数')
-
-        // null的边界测试。能够通过测试主要是因为isMatch里指明如果被测试值为空且测试值不为空，返回false
-        var oCon = {
-            constructor: Object
+    QUnit.test('has', function (assert) {
+        var obj = {
+            foo: 'bar',
+            func: function () {}
         }
-        assert.deepEqual(_.map([null, void 0, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true])
-    })
+        assert.ok(_.has(obj, 'foo'), '检查obj中有一个属性')
+        assert.notOk(_.has(obj, 'baz'), '没有该属性则返回false')
+        assert.ok(_.has(obj, 'func'))
+        obj.hasOwnProperty = null
+        assert.ok(_.has(obj, 'foo'), '在hasOwnProperty方法被删除后已经奏效，因为采用了借用原型方法的写法')
 
-    QUnit.test('findKey', function (assert) {
-        var objs = {
-            a: { a: 0, b: 0 },
-            b: { a: 1, b: 1 },
-            c: { a: 2, b: 2 }
-        }
-        assert.strictEqual(_.findKey(objs, function (obj) {
-            return obj.a === 0
-        }), 'a')
-        assert.strictEqual(_.findKey(objs, function (obj) {
-            return obj.b * obj.a === 4
-        }), 'c')
-        assert.strictEqual(_.findKey(objs, 'a'), 'b')
-        assert.strictEqual(_.findKey(objs, function (obj) {
-            return obj.b * obj.a === 5
-        }), void 0)
-        assert.strictEqual(_.findKey([1, 2, 3, 4, 5, 6], function (obj) {
-            return obj === 3
-        }), '2', '对array生效')
-        assert.strictEqual(_.findKey(objs, function (obj) {
-            return obj.foo === null
-        }), void 0)
-        _.findKey({ a: { a: 1 } }, function (val, key, obj) {
-            assert.strictEqual(key, 'a')
-            assert.deepEqual(obj, { a: { a: 1 } })
-            assert.strictEqual(this, objs, '执行上下文')
-        }, objs)
-
-        var arr = [1, 2, 3]
-        arr.match = 55
-        assert.strictEqual(_.findKey(arr, function (x) {
-            return x === 55
-        }), 'match', '匹配array-like的key') // arr -> [ 0: 1, 1: 2, 2: 3, match: 55, length: 3 ]
+        function Child () {}
+        Child.prototype = obj
+        var child = new Child()
+        // 原代码测试用例好像写错了，`var child = {}; child.prototype = obj`并不意味着obj在child的原型链上，只是为child新增了一个名叫“prototype”的属性
+        assert.notOk(_.has(child, 'foo'), '原型链上的属性不会被检测出')
+        assert.strictEqual(_.has(null, 'foo'), false, '在检测null时return false')
+        assert.strictEqual(_.has(void 0, 'foo'), false, '在检测undefined时return false')
+        assert.ok(_.has({ a: { b: 'c' } }, ['a', 'b']), true, '可以检测嵌套属性')
+        assert.notOk(_.has({ a: child }), ['a', 'foo'], '不会检测嵌套属性的prototype')
     })
 
     QUnit.test('matcher', function (assert) {
@@ -356,5 +273,97 @@
 
     QUnit.test('matches', function (assert) {
         assert.strictEqual(_.matches, _.matcher, '是matcher的别名')
+    })
+
+    QUnit.test('property', function (assert) {
+        var stooge = {
+            name: 'moe',
+            null: 'nullVal',
+            undefined: 'undefinedVal'
+        }
+        assert.strictEqual(_.property('name')(stooge), 'moe', '应返回给出名字的属性')
+        assert.strictEqual(_.property('name')(null), void 0, '应为null对象的name属性返回undefined')
+        assert.strictEqual(_.property('name')(void 0), void 0, '应为undefined对象的name属性返回undefined')
+        // 原例默认stooge[null] === undefined，可是null也能作为属性名（会被处理为字符串，即stooge[null] === stooge['null']）
+        assert.strictEqual(_.property(null)(stooge), 'nullVal', '应为stooge对象的null属性返回undefined')
+        assert.strictEqual(_.property('x')({ x: null }), null, '可以返回null属性值')
+        assert.strictEqual(_.property(['a', 'b'])({ a: { b: 2 } }), 2, '可以获取嵌套属性')
+        assert.strictEqual(_.property(['a'])({ a: false }), false, '可以获取false值')
+        assert.strictEqual(_.property(['a', 'b'])({ a: { b: null } }), null, '可以获取嵌套属性的null值')
+        assert.strictEqual(_.property([])({ x: 'y' }), void 0, '获取路径为空数组时返回undefined')
+    })
+
+    QUnit.test('isMatch', function (assert) {
+        var moe = { name: 'Moe Howard', hair: true },
+            curly = { name: 'Curly Howard', hair: false }
+        assert.strictEqual(_.isMatch(moe, { hair: true }), true)
+        assert.strictEqual(_.isMatch(curly, { hair: true }), false)
+        assert.strictEqual(_.isMatch(5, { __x__: void 0 }), false, '可以在原始类型上匹配undefined属性值')
+        assert.strictEqual(_.isMatch({ __x__: void 0 }, { __x__: void 0 }), true, '可以匹配undefined属性值')
+        assert.strictEqual(_.isMatch(null, {}), true)
+        assert.strictEqual(_.isMatch(null, { a: 1 }), false)
+
+        _.each([null, void 0], function (item) {
+            assert.strictEqual(_.isMatch(item, null), true, 'null匹配null')
+        })
+        _.each([null, void 0], function (item) {
+            assert.strictEqual(_.isMatch(item, {}), true, '{}匹配null')
+        })
+        assert.strictEqual(_.isMatch({ b: 1 }, { a: void 0 }), false)
+        _.each([true, 5, NaN, null, void 0], function (item) {
+            assert.strictEqual(_.isMatch({ a: 1 }, item), true, '将原始值当做空来处理')
+        })
+
+        function F () {}
+        F.prototype.x = 1
+        var subObj = new F()
+        assert.strictEqual(_.isMatch({ x: 2 }, subObj), true, '需要查找的对象，其属性不包括原型属性')
+        subObj.y = 5
+        assert.strictEqual(_.isMatch({ x: 1, y: 5 }, subObj), true)
+        assert.strictEqual(_.isMatch({ x: 1, y: 4 }, subObj), false)
+        assert.ok(_.isMatch(subObj, { x: 1, y: 5 }), true, '但是被检测的对象，被检测属性包括原型属性')
+        F.x = 5
+        assert.ok(_.isMatch({ x: 5, y: 1 }, F), '需要查找的对象可以是一个函数')
+
+        // null的边界测试。能够通过测试主要是因为isMatch里指明如果被测试值为空且测试值不为空，返回false
+        var oCon = {
+            constructor: Object
+        }
+        assert.deepEqual(_.map([null, void 0, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true])
+    })
+
+    QUnit.test('isArray', function (assert) {
+        assert.notOk(_.isArray(void 0), 'undefined不是数组')
+        assert.notOk(_.isArray(arguments), 'arguments不是数组')
+        assert.ok(_.isArray([1, 2, 3]), '可以检测数组')
+    })
+
+    QUnit.test('isObject', function (assert) {
+        assert.ok(_.isObject(arguments), 'arguments是object')
+        assert.ok(_.isObject([1, 2, 3]), '数组是object')
+        if (testElement) {
+            assert.ok(_.isObject(testElement), 'DOM元素是对象')
+        }
+        assert.ok(_.isObject(_.noop), '函数是对象')
+        assert.notOk(_.isObject(null), 'null不是对象')
+        assert.notOk(_.isObject(void 0), 'undefined不是对象')
+        assert.notOk(_.isObject('string'), 'string不是对象')
+        assert.notOk(_.isObject(12), 'number不是对象')
+        assert.notOk(_.isObject(true), 'true不是对象')
+        // new新建实例对象，因此是一个对象
+        assert.ok(_.isObject(new String()), 'new String()是对象')
+    })
+
+    QUnit.test('isFunction', function (assert) {
+        assert.notOk(_.isFunction(void 0), 'undefined不是函数')
+        assert.notOk(_.isFunction([1, 2, 3]), '数组不是函数')
+        assert.notOk(_.isFunction('moe'), '字符串不是函数')
+        assert.ok(_.isFunction(_.isFunction), '函数是函数')
+        assert.ok(_.isFunction(function () {}), '匿名函数是函数')
+
+        testElement && assert.notOk(_.isFunction(testElement), '元素不是函数')
+
+        var nodeList = typeof document !== 'undefined' && document.childNodes
+        nodeList && assert.notOk(_.isFunction(nodeList))
     })
 })()
