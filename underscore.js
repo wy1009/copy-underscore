@@ -391,12 +391,18 @@
 
     // Arrays - 数组
 
-    var flatten = function (obj, result) {
+    var flatten = function (obj, shallow, result) {
         result = result || []
         var length = getLength(obj)
         for (var i = 0; i < length; i ++) {
             if (isArrayLike(obj[i])) {
-                flatten(obj[i], result)
+                if (shallow) {
+                    for (var j = 0; j < obj[i].length; j ++) {
+                        result.push(obj[i][j])
+                    }
+                } else {
+                    flatten(obj[i], shallow, result)
+                }
             } else {
                 result.push(obj[i])
             }
@@ -405,25 +411,7 @@
     }
 
     _.flatten = function (obj, shallow) {
-        if (!isArrayLike(obj)) {
-            return []
-        }
-        if (shallow) {
-            var length = getLength(obj),
-                result = []
-            for (var i = 0; i < length; i ++) {
-                if (isArrayLike(obj[i])) {
-                    for (var j = 0; j < obj[i].length; j ++) {
-                        result.push(obj[i][j])
-                    }
-                } else {
-                    result.push(obj[i])
-                }
-            }
-            return result
-        } else {
-            return flatten(obj)
-        }
+        return flatten(obj, shallow)
     }
 
     // 二分法查找能插入值的最小index
