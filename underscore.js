@@ -87,6 +87,7 @@
     // 帮助集合方法确定一个集合应该被当做数组还是对象来迭代
     var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1 // 能精确表示的最大整数
     var getLength = shallowProperty('length')
+    // String也会被算作“array-like”
     var isArrayLike = function (collection) {
         var length = getLength(collection)
         return typeof length === 'number' && length >= 0 && length <= MAX_ARRAY_INDEX
@@ -395,7 +396,9 @@
         result = result || []
         var length = getLength(obj)
         for (var i = 0; i < length; i ++) {
-            if (isArrayLike(obj[i])) {
+            // string会被判断为isArrayLike，则永远不终止，栈溢出
+            // 函数作为为将引用类型展开，因此可以仅接受引用类型
+            if (_.isObject(obj[i]) && isArrayLike(obj[i])) {
                 if (shallow) {
                     for (var j = 0; j < obj[i].length; j ++) {
                         result.push(obj[i][j])
@@ -809,7 +812,7 @@
             // 共有两种调用方式，_.xx或_().xx，前者直接调用_上的方法，只有后者才会调用prototype上的方法
             _.prototype[name] = function () {
                 var args = [this._wrapped]
-                args.push(arguments)
+                Array.prototype.push.apply(args, arguments)
                 return chainResult(this, func.apply(_, args))
             }
         })
