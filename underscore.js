@@ -391,6 +391,45 @@
 
     // Arrays - 数组
 
+    var flatten = function (obj, result) {
+        result = result || []
+        if (!isArrayLike(obj)) {
+            result.push(obj)
+            return
+        }
+        var length = getLength(obj)
+        for (var i = 0; i < length; i ++) {
+            if (isArrayLike(obj[i])) {
+                flatten(obj[i], result)
+            } else {
+                result.push(obj[i])
+            }
+        }
+        return result
+    }
+
+    _.flatten = function (obj, shallow) {
+        if (!isArrayLike(obj)) {
+            return []
+        }
+        if (shallow) {
+            var length = getLength(obj),
+                result = []
+            for (var i = 0; i < length; i ++) {
+                if (isArrayLike(obj[i])) {
+                    for (var j = 0; j < obj[i].length; j ++) {
+                        result.push(obj[i][j])
+                    }
+                } else {
+                    result.push(obj[i])
+                }
+            }
+            return result
+        } else {
+            return flatten(obj)
+        }
+    }
+
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {
         iteratee = cb(iteratee, context)

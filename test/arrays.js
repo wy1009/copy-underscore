@@ -1,4 +1,30 @@
 ;(function () {
+    QUnit.test('flatten', function (assert) {
+        assert.deepEqual(_.flatten(null), [], '支持null')
+        assert.deepEqual(_.flatten(void 0), [], '支持undefined')
+        assert.deepEqual(_.flatten([[], [[]], []]), [], '支持空数组')
+        assert.deepEqual(_.flatten([[], [[]], []], true), [[]], '可以浅flatten空数组')
+
+        var list = [1, [2], [3, [[[4]]]]]
+        assert.deepEqual(_.flatten(list), [1, 2, 3, 4], '可以flatten嵌套数组')
+        assert.deepEqual(_.flatten(list, true), [1, 2, 3, [[[4]]]], '可以浅flatten嵌套数组')
+
+        assert.deepEqual(function () { return _.flatten(arguments) }(1, [2], [3, [[[4]]]]), [1, 2, 3, 4], '对arguments奏效')
+
+        list = [[1], [2], [3], [[4]]]
+        assert.deepEqual(_.flatten(list, true), [1, 2, 3, [4]])
+
+        assert.strictEqual(_.flatten([_.range(10), _.range(10), 5, 1, 3], true).length, 23, '能够flatten中等长度的数组')
+        assert.strictEqual(_.flatten([_.range(10), _.range(10), 5, 1, 3]).length, 23, '能够浅flatten中等长度的数组')
+        assert.strictEqual(_.flatten([new Array(1000000), _.range(56000), 5, 1, 3]).length, 1056003, '能支持巨大的数组')
+        assert.strictEqual(_.flatten([new Array(1000000), _.range(56000), 5, 1, 3], true).length, 1056003, '能浅flatten巨大的数组')
+
+        var x = _.range(100000)
+        for (var i = 0; i < 1000; i++) x = [x]
+        assert.deepEqual(_.flatten(x), _.range(100000), '能够支持很深的数组')
+        assert.deepEqual(_.flatten(x, true), x[0], '支持浅flatten很深的数组')
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },
