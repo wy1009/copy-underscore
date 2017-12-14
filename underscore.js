@@ -799,7 +799,7 @@
     // 根据instance中_chain属性的值，决定是否处于链式调用中，从而决定是否需要将函数返回的obj继续包装为一个实例
     // 包装方法实际上就是创建一个_实例，其中_wrapped属性等于该对象
     var chainResult = function (instance, obj) {
-        instance._chain ? _.chain(obj) : obj
+        return instance._chain ? _.chain(obj) : obj
     }
 
     // 将自己的方法扩展到Underscore，传递一个{ name: function }定义的哈希添加到Underscore对象，以及面向对象封装
