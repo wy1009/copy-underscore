@@ -393,10 +393,6 @@
 
     var flatten = function (obj, result) {
         result = result || []
-        if (!isArrayLike(obj)) {
-            result.push(obj)
-            return
-        }
         var length = getLength(obj)
         for (var i = 0; i < length; i ++) {
             if (isArrayLike(obj[i])) {

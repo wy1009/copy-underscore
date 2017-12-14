@@ -11,8 +11,9 @@
 
         assert.deepEqual(function () { return _.flatten(arguments) }(1, [2], [3, [[[4]]]]), [1, 2, 3, 4], '对arguments奏效')
 
-        list = [[1], [2], [3], [[4]]]
-        assert.deepEqual(_.flatten(list, true), [1, 2, 3, [4]])
+        list = [[[5], 1], [[4]], [2], [3]]
+        assert.deepEqual(_.flatten(list, true), [[5], 1, [4], 2, 3])
+        assert.deepEqual(_.flatten(list), [5, 1, 4, 2, 3])
 
         assert.strictEqual(_.flatten([_.range(10), _.range(10), 5, 1, 3], true).length, 23, '能够flatten中等长度的数组')
         assert.strictEqual(_.flatten([_.range(10), _.range(10), 5, 1, 3]).length, 23, '能够浅flatten中等长度的数组')
