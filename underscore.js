@@ -1,5 +1,5 @@
 ;(function () {
-    let root = typeof self === 'object' && self.self === self && self || {}
+    var root = typeof self === 'object' && self.self === self && self || {}
 
     var _ = function (obj) {
         if (!(this instanceof _)) {
