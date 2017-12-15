@@ -54,29 +54,29 @@
     })
 
     QUnit.test('map', function (assert) {
-        var doubled = _.map([1, 2, 3], function (num) {
+        assert.deepEqual(_.map([1, 2, 3], function (num) {
             return num * 2
-        })
-        assert.deepEqual(doubled, [2, 4, 6])
+        }), [2, 4, 6])
 
-        var tripled = _.map([1, 2, 3], function (num) {
+        assert.deepEqual(_.map([1, 2, 3], function (num) {
             return num * this.multiplier
-        }, { multiplier: 3 })
-        assert.deepEqual(tripled, [3, 6, 9])
+        }, { multiplier: 3 }), [3, 6, 9])
 
-        var ids = _.map({ length: 2, 0: { id: 1 }, 1: { id: 2 } }, function (item) {
+        assert.deepEqual(_([1, 2, 3]).map(function (num) {
+            return num * 2
+        }), [2, 4, 6], '面向对象模式')
+
+        assert.deepEqual(_.map({ length: 2, 0: { id: 1 }, 1: { id: 2 } }, function (item) {
             return item.id
-        })
-        assert.deepEqual(ids, [1, 2], '可以用于array-like对象')
+        }), [1, 2], '可以用于array-like对象')
 
         assert.deepEqual(_.map(null, _.noop), [], '可以处理空的情况')
         assert.deepEqual(_.map([1], function (item) {
             return this.length
         }, [1, 2]), [2], '有执行上下文的情况')
 
-        var people = [{ name: 'moe', age: 30 }, { name: 'curly', age: 50 }]
         // 依赖于cb函数的自动处理。如果传入字符串，则自动将该字符串当做属性名处理，返回一个传入obj return obj的该属性值的函数
-        assert.deepEqual(_.map(people, 'name'), ['moe', 'curly'], '传入字符串，则自动取该字符串对应的属性名')
+        assert.deepEqual(_.map([{ name: 'moe', age: 30 }, { name: 'curly', age: 50 }], 'name'), ['moe', 'curly'], '传入字符串，则自动取该字符串对应的属性名')
     })
 
     QUnit.test('reduce', function (assert) {
@@ -89,6 +89,10 @@
         assert.strictEqual(_.reduce(arr, function (memo, num) {
             return memo + num * this.multiplier
         }, 0, context), 18, '执行上下文')
+
+        assert.strictEqual(_([1, 2, 3]).reduce(function (memo, num) {
+            return memo + num
+        }, 0), 6, '面向对象模式')
 
         assert.strictEqual(_.reduce(arr, function (memo, num) {
             return memo + num
@@ -222,6 +226,7 @@
         assert.deepEqual(_.filter(list, { a: 1 }), [{ a: 1, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }])
         assert.deepEqual(_.filter(list, { b: 2 }), [{ a: 1, b: 2 }, { a: 2, b: 2 }])
         assert.deepEqual(_.filter(list, {}), list, '空对象返回所有值')
+        assert.deepEqual(_(list).filter({}), list, '面向对象模式')
     })
 
     QUnit.test('where', function (assert) {
@@ -357,6 +362,7 @@
         assert.strictEqual(_.includes([1, 3, 9], 2), false, '2不在数组中')
         assert.strictEqual(_.includes([5, 4, 3, 2, 1], 5, true), false, '使用二分法查找，要求数组正序')
         assert.strictEqual(_.includes({ moe: 1, larry: 3, curly: 9 }, 3), true, '如果是object，只检查值')
+        assert.ok(_([1, 2, 3]).includes(2), '面向对象模式')
 
         var numbers = [1, 2, 3, 1, 2, 3, 1, 2, 3]
         assert.strictEqual(_.includes(numbers, 1, 1), true, 'fromIndex')
