@@ -1,4 +1,20 @@
 ;(function () {
+    QUnit.test('first', function (assert) {
+        assert.strictEqual(_.first([1, 2, 3]), 1, '可以提出数组的第一个元素')
+        assert.strictEqual(_([1, 2, 3]).first(), 1, '面向对象模式')
+        assert.deepEqual(_.first([1, 2, 3], 0), [], '等于0时返回空数组')
+        assert.deepEqual(_.first([1, 2, 3], -1), [], '小于0时返回空数组')
+        assert.deepEqual(_.first([1, 2, 3], 2), [1, 2], '可以取得前n个元素')
+        assert.deepEqual(_.first([1, 2, 3], 5), [1, 2, 3], '当n>length时取得整个数组')
+        assert.strictEqual(function (){ return _.first(arguments) }(4, 3, 2, 1), 4, '对arguments奏效')
+        assert.deepEqual(_.map([[1, 2, 3], [1, 2, 3]], _.first), [1, 1], '和_.map一起用')
+        assert.strictEqual(_.first(null), void 0, '当传入null时返回undefined')
+    
+        Array.prototype[0] = 'boo'
+        assert.strictEqual(_.first([]), void 0, '当传入空数组时返回undefined')
+        delete Array.prototype[0]
+    })
+
     QUnit.test('flatten', function (assert) {
         assert.deepEqual(_.flatten(null), [], '支持null')
         assert.deepEqual(_.flatten(void 0), [], '支持undefined')
@@ -82,11 +98,11 @@
             { a: 0, b: 0 },
             { aa: 1, bb: 1 }
         ]
-    
+
         assert.strictEqual(_.findLastIndex(objects, function (obj) {
             return obj.a === 0
         }), 3, '只返回从开始算起最后一个符合条件的index')
-    
+
         assert.strictEqual(_.findLastIndex(objects, function (obj) {
             return obj.a * obj.b === 4
         }), 2)
@@ -98,7 +114,7 @@
         // 以该测试用例为例，传入一个字符串，相当于检测数组每项的'a'属性是否为true，为true则返回index
         assert.strictEqual(_.findLastIndex(objects, 'aa'), 4)
         assert.strictEqual(_.findLastIndex(null, _.noop), -1)
-        
+
         _.findLastIndex([{ a: 1 }], function (obj, index, objs) {
             assert.strictEqual(index, 0)
             assert.deepEqual(objs, [{ a: 1 }])

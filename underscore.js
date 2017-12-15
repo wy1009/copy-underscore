@@ -392,6 +392,20 @@
 
     // Arrays - 数组
 
+    // 返回数组的第一个元素。传递n将返回数组的前n个元素。
+    _.first = function (obj, n, guard) {
+        if (obj === null || obj === void 0 || obj.length < 1) {
+            return void 0
+        }
+        if (n === null || n === void 0 || guard) {
+            return obj[0]
+        }
+        if (n <= 0) {
+            return []
+        }
+        return Array.prototype.slice.call(obj, 0, n)
+    }
+
     var flatten = function (obj, shallow, result) {
         result = result || []
         var length = getLength(obj)
