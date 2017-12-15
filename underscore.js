@@ -393,7 +393,7 @@
     // Arrays - 数组
 
     // 返回数组的第一个元素。传递n将返回数组的前n个元素。
-    _.first = function (obj, n, guard) {
+    _.first = _.head = _.take = function (obj, n, guard) {
         if (obj === null || obj === void 0 || obj.length < 1) {
             return void 0
         }
@@ -404,6 +404,11 @@
             return []
         }
         return Array.prototype.slice.call(obj, 0, n)
+    }
+
+    // 返回数组中除了最后一个元素以外的元素。传递n则返回排除后面n个元素的数组。
+    _.initial = function (obj, n, guard) {
+        return _.first(obj, obj && obj.length && n && !guard ? obj.length - n : obj.length - 1)
     }
 
     var flatten = function (obj, shallow, result) {

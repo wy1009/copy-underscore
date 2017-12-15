@@ -15,6 +15,22 @@
         delete Array.prototype[0]
     })
 
+    QUnit.test('head', function (assert) {
+        assert.strictEqual(_.head, _.first, '是first的别名')
+    })
+
+    QUnit.test('take', function (assert) {
+        assert.strictEqual(_.take, _.first, '是first的别名')
+    })
+
+    QUnit.test('initial', function (assert) {
+        assert.deepEqual(_.initial([1, 2, 3, 4, 5]), [1, 2, 3, 4], '返回除最后一个元素的所有元素')
+        assert.deepEqual(_.initial([1, 2, 3, 4], 2), [1, 2], '返回除了后n个元素的所有元素')
+        assert.deepEqual(_.initial([1, 2, 3, 4], 6), [], '当n>length时返回空数组')
+        assert.deepEqual(function () { return _(arguments).initial() }(1, 2, 3, 4), [1, 2, 3], '对arguments奏效')
+        assert.deepEqual(_.flatten(_.map([[1, 2, 3], [1, 2, 3]], _.initial)), [1, 2, 1, 2], '可以与_.map搭配')
+    })
+
     QUnit.test('flatten', function (assert) {
         assert.deepEqual(_.flatten(null), [], '支持null')
         assert.deepEqual(_.flatten(void 0), [], '支持undefined')
