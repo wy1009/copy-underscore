@@ -29,6 +29,7 @@
         assert.deepEqual(_.initial([1, 2, 3, 4], 6), [], '当n>length时返回空数组')
         assert.deepEqual(function () { return _(arguments).initial() }(1, 2, 3, 4), [1, 2, 3], '对arguments奏效')
         assert.deepEqual(_.flatten(_.map([[1, 2, 3], [1, 2, 3]], _.initial)), [1, 2, 1, 2], '可以与_.map搭配')
+        assert.strictEqual(_.initial(null), void 0, '当传入null时返回undefined')
     })
 
     QUnit.test('flatten', function (assert) {
