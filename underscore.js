@@ -414,10 +414,38 @@
         if (n === null || n === void 0 || guard) {
             n = 1
         }
-        if (obj.length - n <= 0) {
+        if (n >= obj.length) {
             return []
         }
         return Array.prototype.slice.call(obj, 0, obj.length - n)
+    }
+
+    // 返回数组的最后一个元素。传递n将返回数组的倒数n个元素。
+    _.last = function (obj, n, guard) {
+        if (obj === null || obj === void 0 || !obj.length || obj.length < 1) {
+            return void 0
+        }
+        if (n === null || n === void 0 || guard) {
+            return obj[obj.length - 1]
+        }
+        if (n <= 0) {
+            return []
+        }
+        return Array.prototype.slice.call(obj, -n)
+    }
+
+    // 返回数组除了第一个元素以外的其他元素。传递n将返回除前n个元素以外的其他元素。
+    _.rest = function (obj, n, guard) {
+        if (obj === null || obj === void 0 || !obj.length || obj.length < 1) {
+            return void 0
+        }
+        if (n === null || n === void 0 || guard) {
+            n = 1
+        }
+        if (n < 0) {
+            return []
+        }
+        return Array.prototype.slice.call(obj, n)
     }
 
     var flatten = function (obj, shallow, result) {

@@ -32,6 +32,31 @@
         assert.strictEqual(_.initial(null), void 0, '当传入null时返回undefined')
     })
 
+    QUnit.test('last', function (assert) {
+        assert.strictEqual(_.last([1, 2, 3]), 3, '能够取出数组最后一个元素')
+        assert.strictEqual(_([1, 2, 3]).last(), 3, '支持面向对象模式')
+        assert.deepEqual(_.last([1, 2, 3], 0), [], '当n<=0时返回空数组')
+        assert.deepEqual(_.last([1, 2, 3], -1), [], '当n<=0时返回空数组')
+        assert.deepEqual(_.last([1, 2, 3], 2), [2, 3], '可以取得后n个元素')
+        assert.deepEqual(_.last([1, 2, 3], 5), [1, 2, 3], '当n大于length时可以处理')
+        assert.strictEqual(function () { return _(arguments).last() }(1, 2, 3, 4), 4, '对arguments奏效')
+        assert.deepEqual(_.map([[1, 2, 3], [1, 2, 3]], _.last), [3, 3], '可以与map一起使用')
+        assert.strictEqual(_.last(null), void 0, '当传入null时返回undefined')
+    
+        var arr = []
+        arr[-1] = 'boo'
+        assert.strictEqual(_.last(arr), void 0, 'return undefined when called on a empty array')
+    })
+
+    QUnit.test('rest', function (assert) {
+        var numbers = [1, 2, 3, 4]
+        assert.deepEqual(_.rest(numbers), [2, 3, 4], '取出除了第一个元素以外的元素')
+        assert.deepEqual(_.rest(numbers, 0), [1, 2, 3, 4], '当index为0时返回所有元素')
+        assert.deepEqual(_.rest(numbers, 2), [3, 4])
+        assert.deepEqual(function(){ return _(arguments).rest() }(1, 2, 3, 4), [2, 3, 4], '对arguments奏效')
+        assert.deepEqual(_.flatten(_.map([[1, 2, 3], [1, 2, 3]], _.rest)), [2, 3, 2, 3], '可以和map配合使用')
+    })
+
     QUnit.test('flatten', function (assert) {
         assert.deepEqual(_.flatten(null), [], '支持null')
         assert.deepEqual(_.flatten(void 0), [], '支持undefined')
