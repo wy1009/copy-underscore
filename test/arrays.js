@@ -45,7 +45,7 @@
     
         var arr = []
         arr[-1] = 'boo'
-        assert.strictEqual(_.last(arr), void 0, 'return undefined when called on a empty array')
+        assert.strictEqual(_.last(arr), void 0, '当空数组时返回undefined')
     })
 
     QUnit.test('rest', function (assert) {
@@ -55,6 +55,7 @@
         assert.deepEqual(_.rest(numbers, 2), [3, 4])
         assert.deepEqual(function(){ return _(arguments).rest() }(1, 2, 3, 4), [2, 3, 4], '对arguments奏效')
         assert.deepEqual(_.flatten(_.map([[1, 2, 3], [1, 2, 3]], _.rest)), [2, 3, 2, 3], '可以和map配合使用')
+        assert.strictEqual(_.rest(null), void 0, '当传入null时返回undefined')
     })
 
     QUnit.test('flatten', function (assert) {
