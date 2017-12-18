@@ -478,6 +478,13 @@
         return flatten(obj, shallow)
     }
 
+    // 返回一个删除所有values值后的array副本。
+    _.without = restArgs(function (obj, values) {
+        return _.filter(obj, function (val) {
+            return !_.contains(values, val)
+        })
+    })
+
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {
         iteratee = cb(iteratee, context)

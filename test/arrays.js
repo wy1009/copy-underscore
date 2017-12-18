@@ -91,6 +91,16 @@
         assert.deepEqual(_.flatten(x, true), x[0], '支持浅flatten很深的数组')
     })
 
+    QUnit.test('without', function (assert) {
+        var list = [1, 2, 1, 0, 3, 1, 4]
+        assert.deepEqual(_.without(list, 0, 1), [2, 3, 4], '移除给定值')
+        assert.deepEqual(function () { return _.without(arguments, 0, 1) }(1, 2, 1, 0, 3, 1, 4), [2, 3, 4], '对arguments奏效')
+    
+        list = [{ one: 1 }, { two: 2 }]
+        assert.deepEqual(_.without(list, { one: 1 }), list, '依照引用比较对象（值用例）')
+        assert.deepEqual(_.without(list, list[0]), [{ two: 2 }], '依照引用比较对象（引用用例）')
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },
