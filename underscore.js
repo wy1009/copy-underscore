@@ -392,7 +392,7 @@
 
     // Arrays - 数组
 
-    // 返回数组的第一个元素。传递n将返回数组的前n个元素。
+    // 返回数组的第一个元素。传递n将返回数组的前n个元素。（0~n）
     _.first = _.head = _.take = function (obj, n, guard) {
         if (obj === null || obj === void 0 || !obj.length || obj.length < 1) {
             return void 0
@@ -406,7 +406,7 @@
         return Array.prototype.slice.call(obj, 0, n)
     }
 
-    // 返回数组中除了最后一个元素以外的元素。传递n则返回排除后面n个元素的数组。
+    // 返回数组中除了最后一个元素以外的元素。传递n则返回排除后面n个元素的数组。（0~length-n）
     _.initial = function (obj, n, guard) {
         if (obj === null || obj === void 0 || !obj.length || obj.length < 1) {
             return void 0
@@ -420,7 +420,7 @@
         return Array.prototype.slice.call(obj, 0, obj.length - n)
     }
 
-    // 返回数组的最后一个元素。传递n将返回数组的倒数n个元素。
+    // 返回数组的最后一个元素。传递n将返回数组的倒数n个元素。（length-n~length）
     _.last = function (obj, n, guard) {
         if (obj === null || obj === void 0 || !obj.length || obj.length < 1) {
             return void 0
@@ -434,7 +434,7 @@
         return Array.prototype.slice.call(obj, -n)
     }
 
-    // 返回数组除了第一个元素以外的其他元素。传递n将返回除前n个元素以外的其他元素。
+    // 返回数组除了第一个元素以外的其他元素。传递n将返回除前n个元素以外的其他元素。（n~length）
     _.rest = function (obj, n, guard) {
         if (obj === null || obj === void 0 || !obj.length || obj.length < 1) {
             return void 0
@@ -446,6 +446,11 @@
             return []
         }
         return Array.prototype.slice.call(obj, n)
+    }
+
+    // 返回去除了所有false值的obj副本。在JavaScript中，false、null、undefined、0、NaN都是false值。
+    _.compact = function (obj) {
+        return _.filter(obj, Boolean)
     }
 
     var flatten = function (obj, shallow, result) {

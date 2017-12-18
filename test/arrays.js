@@ -58,6 +58,12 @@
         assert.strictEqual(_.rest(null), void 0, '当传入null时返回undefined')
     })
 
+    QUnit.test('compact', function (assert) {
+        assert.deepEqual(_.compact([1, false, null, 0, '', void 0, NaN, 2]), [1, 2], '移除falsy值')
+        assert.deepEqual(function () { return _.compact(arguments) }(0, 1, false, 2, false, 3), [1, 2, 3], '对arguments奏效')
+        assert.deepEqual(_.map([[1, false, false], [false, false, 3]], _.compact), [[1], [3]], '可以和map一起使用')
+    })
+
     QUnit.test('flatten', function (assert) {
         assert.deepEqual(_.flatten(null), [], '支持null')
         assert.deepEqual(_.flatten(void 0), [], '支持undefined')
