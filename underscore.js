@@ -454,7 +454,9 @@
         return _.filter(obj, Boolean)
     }
 
-    var flatten = function (obj, shallow, result) {
+    // strict为false，则非数组元素也会被推入结果，如：[[1, 2, 3], 4]，结果为[1, 2, 3, 4]
+    // strict为true，则非数组元素不会被推入结果，如：[[1, 2, 3], 4]，结果为[1, 2, 3]
+    var flatten = function (obj, shallow, strict, result) {
         result = result || []
         var length = getLength(obj)
         for (var i = 0; i < length; i ++) {
@@ -466,9 +468,9 @@
                         result.push(obj[i][j])
                     }
                 } else {
-                    flatten(obj[i], shallow, result)
+                    flatten(obj[i], shallow, strict, result)
                 }
-            } else {
+            } else if (!strict) {
                 result.push(obj[i])
             }
         }
@@ -513,6 +515,10 @@
         }
         return result
     }
+
+    _.union = restArgs(function (arrays) {
+        return _.uniq(flatten(arrays, true, true))
+    })
 
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {

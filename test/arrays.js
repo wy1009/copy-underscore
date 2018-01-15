@@ -138,6 +138,22 @@
         }, context)
     })
 
+    QUnit.test('unique', function (assert) {
+        assert.strictEqual(_.unique, _.uniq, '是uniq的别名')
+    })
+
+    QUnit.test('union', function (assert) {
+        assert.deepEqual(_.union([1, 2, 3], [2, 30, 1], [1, 40]), [1, 2, 3, 30, 40], '可以找出一列数组的并集')
+        assert.deepEqual(_([1, 2, 3]).union([2, 30, 1], [1, 40]), [1, 2, 3, 30, 40], '面向对象模式')
+        assert.deepEqual(_.union([1, 2, 3], [2, 30, 1], [1, 40, [1]]), [1, 2, 3, 30, 40, [1]], '可以找到含嵌套数组的并集')
+        assert.deepEqual(_.union([10, 20], [1, 30, 10], [0, 40]), [10, 20, 1, 30, 0, 40], '按初次出现的顺序排序')
+        
+        var result = (function () { return _.union(arguments, [2, 30, 1], [1, 40]) })(1, 2, 3)
+        assert.deepEqual(result, [1, 2, 3, 30, 40], '对arguments奏效')
+
+        assert.deepEqual(_.union([1, 2, 3], 4), [1, 2, 3], '只能够得到数组的并集')
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },
