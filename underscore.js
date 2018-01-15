@@ -497,19 +497,14 @@
         var result = [],
             computed = [],
             length = getLength(array)
-        if (isSorted) {
-            result.push(array[0])
-            computed.push(iteratee(array[0], 0, array))
-            for (var i = 1; i < length; i ++) {
-                var computedVal = iteratee(array[i], i, array)
-                if (computedVal !== iteratee(array[i - 1], i, array)) {
+        for (var i = 0; i < length; i ++) {
+            var computedVal = iteratee(array[i], i, array)
+            if (isSorted) { 
+                if (!i || computedVal !== computed) {
                     result.push(array[i])
-                    computed.push(computedVal)
                 }
-            }
-        } else {
-            for (var i = 0; i < length; i ++) {
-                var computedVal = iteratee(array[i], i, array)
+                computed = computedVal
+            } else {
                 if (!_.contains(computed, computedVal)) {
                     result.push(array[i])
                     computed.push(computedVal)
