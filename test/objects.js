@@ -366,4 +366,17 @@
         var nodeList = typeof document !== 'undefined' && document.childNodes
         nodeList && assert.notOk(_.isFunction(nodeList))
     })
+
+    QUnit.test('isBoolean', function (assert) {
+        assert.notOk(_.isBoolean(2), '数字不是布尔值');
+        assert.notOk(_.isBoolean('string'), '字符串不是布尔值');
+        assert.notOk(_.isBoolean('false'), '字符串“false”不是布尔值');
+        assert.notOk(_.isBoolean('true'), '字符串“true”不是布尔值');
+        assert.notOk(_.isBoolean(arguments), 'arguments不是布尔值');
+        assert.notOk(_.isBoolean(void 0), 'undefined不是布尔值');
+        assert.notOk(_.isBoolean(NaN), 'NaN不是布尔值');
+        assert.notOk(_.isBoolean(null), 'null不是布尔值');
+        assert.ok(_.isBoolean(true), 'true是布尔值');
+        assert.ok(_.isBoolean(false), 'false是布尔值');
+    });
 })()

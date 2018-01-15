@@ -101,6 +101,43 @@
         assert.deepEqual(_.without(list, list[0]), [{ two: 2 }], '依照引用比较对象（引用用例）')
     })
 
+    QUnit.test('uniq', function (assert) {
+        assert.deepEqual(_.uniq([1, 2, 1, 3, 1, 4]), [1, 2, 3, 4], '未排序数组能去重')
+        assert.deepEqual(_.uniq([1, 1, 1, 2, 2, 3]), [1, 2, 3], '能为排序过的数组去重')
+        
+        var list = [{ name: 'Moe' }, { name: 'Curly' }, { name: 'Larry' }, { name: 'Curly' }]
+        var expected = [{ name: 'Moe' }, { name: 'Curly' }, { name: 'Larry' }]
+        var iterator = function (stooge) { return stooge.name }
+        assert.deepEqual(_.uniq(list, false, iterator), expected, '使用iterator的结果去重（未排序例子）')
+        assert.deepEqual(_.uniq(list, iterator), expected, '未指定时，isSorted参数默认为false')
+        assert.deepEqual(_.uniq(list, 'name'), expected, '当iterator是一个字符串，作为key来去重')
+
+        list = [{ score: 8 }, { score: 10 }, { score: 10 }]
+        expected = [{ score: 8 }, { score: 10 }]
+        iterator = function (item) { return item.score }
+        assert.deepEqual(_.uniq(list, true, iterator), expected, '使用iterator的结果去重（排序例子）')
+        assert.deepEqual(_.uniq(list, true, 'score'), expected, '当iterator是一个字符串，作为key来去重（排序例子）')
+
+        assert.deepEqual(_.uniq([{ 0: 1 }, { 0: 1 }, { 0: 1 }, { 0: 2 }], 0), [{ 0: 1 }, { 0: 2 }], '想iterator一样使用falsy值')
+
+        var result = (function () { return _.uniq(arguments) })(1, 2, 1, 3, 1, 4)
+        assert.deepEqual(result, [1, 2, 3, 4], '对arguments奏效')
+
+        var a = {}, b = {}, c = {}
+        assert.deepEqual(_.uniq([a, b, a, b, c]), [a, b, c], '对等价但是没有序的值有效')
+
+        assert.deepEqual(_.uniq(null), [], '当array不可迭代时，返回空数组')
+
+        var context = {}
+        list = [3]
+        _.uniq(list, function (val, index, array) {
+            assert.strictEqual(this, context, '执行上下文')
+            assert.strictEqual(val, 3, '将值传递给迭代器')
+            assert.strictEqual(index, 0, '将index传递给迭代器')
+            assert.strictEqual(array, list, '将整个数组传递给迭代器')
+        }, context)
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },

@@ -53,6 +53,7 @@
                 rest[i] = arguments[i + startIndex]
             }
             switch (startIndex) {
+                case 0: return func.call(this, rest); break;
                 case 1: return func.call(this, arguments[0], rest); break
                 case 2: return func.call(this, arguments[0], arguments[1], rest); break
             }
@@ -485,6 +486,39 @@
         })
     })
 
+    // 返回array去重后的副本，使用===做相等测试。如果确定array已经排序，那么给isSorted参数传递true，运行更快算法。
+    _.uniq = _.unique = function (array, isSorted, iteratee, context) {
+        if (!_.isBoolean(isSorted)) {
+            context = iteratee
+            iteratee = isSorted
+            isSorted = false
+        }
+        iteratee = cb(iteratee, context)
+        var result = [],
+            computed = [],
+            length = getLength(array)
+        if (isSorted) {
+            result.push(array[0])
+            computed.push(iteratee(array[0], 0, array))
+            for (var i = 1; i < length; i ++) {
+                var computedVal = iteratee(array[i], i, array)
+                if (computedVal !== iteratee(array[i - 1], i, array)) {
+                    result.push(array[i])
+                    computed.push(computedVal)
+                }
+            }
+        } else {
+            for (var i = 0; i < length; i ++) {
+                var computedVal = iteratee(array[i], i, array)
+                if (!_.contains(computed, computedVal)) {
+                    result.push(array[i])
+                    computed.push(computedVal)
+                }
+            }
+        }
+        return result
+    }
+
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {
         iteratee = cb(iteratee, context)
@@ -826,6 +860,11 @@
     // 传入的变量是否是NaN
     _.isNaN = function (obj) {
         return _.isNumber(obj) && isNaN(obj)
+    }
+
+    // 传入变量是否为布尔值
+    _.isBoolean = function (obj) {
+        return obj === true || obj === false || Object.prototype.toString.call(obj) === '[object Boolean]'
     }
 
     _.each(['Arguments', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function (item) {
