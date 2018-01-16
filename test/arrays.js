@@ -154,6 +154,23 @@
         assert.deepEqual(_.union([1, 2, 3], 4), [1, 2, 3], '只能够得到数组的并集')
     })
 
+    QUnit.test('intersection', function (assert) {
+        var stooge = ['moe', 'curly', 'larry'],
+            leaders = ['moe', 'groucho']
+        assert.deepEqual(_.intersection(stooge, leaders), ['moe'], '可以找到两个数组的交集')
+        assert.deepEqual(_(stooge).intersection(leaders), ['moe'], '面向对象模式')
+        
+        var result = (function () { return _.intersection(arguments, leaders) })('moe', 'curly', 'larry')
+        assert.deepEqual(result, ['moe'], '对arguments奏效')
+
+        stooge = ['moe', 'moe', 'curly', 'curly', 'larry', 'larry']
+        assert.deepEqual(_.intersection(stooge, leaders), ['moe'])
+
+        assert.deepEqual(_.intersection([2, 4, 3, 1], [1, 2, 3]), [2, 3, 1], '按照第一个数组的顺序排序')
+        assert.deepEqual(_.intersection(null, [1, 2, 3]), [], '当传入null作为第一个参数时，返回空数组')
+        assert.deepEqual(_.intersection([1, 2, 3], null), [], '当传入null作为非第一个参数时，返回空数组')
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },

@@ -516,9 +516,31 @@
         return result
     }
 
+    // 返回传入数组的并集
     _.union = restArgs(function (arrays) {
         return _.uniq(flatten(arrays, true, true))
     })
+
+    // 返回传入数组的交集
+    _.intersection = function (array) {
+        var result = [],
+            argLength = getLength(arguments)
+        for (var i = 0; i < getLength(array); i ++) {
+            var item = array[i]
+            if (_.contains(result, item)) {
+                continue
+            }
+            for (var j = 0; j < argLength; j ++) {
+                if (!_.contains(arguments[j], item)) {
+                    break
+                }
+            }
+            if (j === argLength) {
+                result.push(item)
+            }
+        }
+        return result
+    }
 
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {
