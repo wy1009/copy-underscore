@@ -171,6 +171,18 @@
         assert.deepEqual(_.intersection([1, 2, 3], null), [], '当传入null作为非第一个参数时，返回空数组')
     })
 
+    QUnit.test('difference', function (assert) {
+        assert.deepEqual(_.difference([1, 2, 3], [2, 30, 40]), [1, 3], '可以找到两个数组中的不同');
+        assert.deepEqual(_([1, 2, 3]).difference([2, 30, 40]), [1, 3], '面向对象模式');
+        assert.deepEqual(_.difference([1, 2, 3, 4], [2, 30, 40], [1, 11, 111]), [3, 4], '可以找到三个数组的不同');
+        assert.deepEqual(_.difference([8, 9, 3, 1], [3, 8]), [9, 1], '依照第一个数组的顺序排列');
+
+        var result = (function(){ return _.difference(arguments, [2, 30, 40]) }(1, 2, 3))
+        assert.deepEqual(result, [1, 3], '对arguments对象奏效');
+
+        assert.deepEqual(_.difference([1, 2, 3], 1), [1, 2, 3], '只会判断与数组的不同');
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },

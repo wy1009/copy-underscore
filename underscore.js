@@ -542,6 +542,14 @@
         return result
     }
 
+    // _.difference(array, *others)，类似without，返回的值来自array参数数组，且不存在于other数组
+    _.difference = restArgs(function (array, others) {
+        others = flatten(others, true, true)
+        return _.filter(array, function (val) {
+            return !_.contains(others, val)
+        })
+    })
+
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {
         iteratee = cb(iteratee, context)
