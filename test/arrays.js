@@ -213,6 +213,12 @@
         assert.deepEqual(_.unzip(zipped), [['moe', 30, void 0], ['larry', 40, void 0], ['curly', 50, 'extra data']], '使用最大数组的长度');
     })
 
+    QUnit.test('object', function (assert) {
+        assert.deepEqual(_.object(['moe', 'larry', 'curly'], [30, 40, 50]), { moe: 30, larry: 40, curly: 50 }, '两个数组压缩为一个对象');
+        assert.deepEqual(_.object([['one', 1], ['two', 2], ['three', 3]]), { one: 1, two: 2, three: 3 }, '一个数组压缩为一个对象');
+        assert.deepEqual(_.object(null), {}, '可以处理null')
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },

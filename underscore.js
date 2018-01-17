@@ -563,6 +563,19 @@
     // 将每个array中相应位置的值合并在一起
     _.zip = restArgs(_.unzip)
 
+    // 将数组转换为对象，传递一个单独的[key, value]列表，或者一个键列表和一个值列表。
+    _.object = function (obj, vals) {
+        var result = {}
+        for (var i = 0; i < getLength(obj); i ++) {
+            if (vals) {
+                result[obj[i]] = vals[i]
+            } else {
+                result[obj[i][0]] = obj[i][1]
+            }
+        }
+        return result
+    }
+
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {
         iteratee = cb(iteratee, context)
