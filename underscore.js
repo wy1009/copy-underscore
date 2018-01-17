@@ -550,6 +550,16 @@
         })
     })
 
+    // 将每个array中相应位置的值合并在一起
+    _.zip = restArgs(function (arrays) {
+        var length = arrays && _.max(arrays, getLength).length || 0,
+            result = []
+        for (var i = 0; i < length; i ++) {
+            result[i] = _.pluck(arrays, i)
+        }
+        return result
+    })
+
     // 二分法查找能插入值的最小index
     _.sortedIndex = function (array, obj, iteratee, context) {
         iteratee = cb(iteratee, context)

@@ -183,6 +183,25 @@
         assert.deepEqual(_.difference([1, 2, 3], 1), [1, 2, 3], '只会判断与数组的不同');
     })
 
+    QUnit.test('zip', function (assert) {
+        var names = ['moe', 'larry', 'curly'],
+            ages = [30, 40, 50],
+            leaders = [true]
+        assert.deepEqual(_.zip(names, ages, leaders), [['moe', 30, true], ['larry', 40, void 0], ['curly', 50, void 0]], '压缩不同长度的数组')
+
+        var stooges = _.zip(['moe', 30, 'stooge 1'], ['larry', 40, 'stooge 2'], ['curly', 50, 'stooge 3'])
+        assert.deepEqual(stooges, [['moe', 'larry', 'curly'], [30, 40, 50], ['stooge 1', 'stooge 2', 'stooge 3']])
+
+        stooges = _.zip(['moe', 30], ['larry', 40], ['curly', 50, 'extra data'])
+        assert.deepEqual(stooges, [['moe', 'larry', 'curly'], [30, 40, 50], [void 0, void 0, 'extra data']], '压缩不同长度的数组')
+
+        var empty = _.zip([])
+        assert.deepEqual(empty, [], '压缩空数组')
+
+        assert.deepEqual(_.zip(null), [], '可以处理null')
+        assert.deepEqual(_.zip(), [], '_.zip()返回[]')
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },
