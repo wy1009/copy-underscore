@@ -202,6 +202,17 @@
         assert.deepEqual(_.zip(), [], '_.zip()返回[]')
     })
 
+    QUnit.test('unzip', function (assert) {
+        assert.deepEqual(_.unzip(null), [], '可以处理null');
+        assert.deepEqual(_.unzip([['a', 'b'], [1, 2]]), [['a', 1], ['b', 2]]);
+
+        var zipped = _.zip(['fred', 'barney'], [30, 40], [true, false]);
+        assert.deepEqual(_.unzip(zipped), [['fred', 'barney'], [30, 40], [true, false]]);
+
+        zipped = _.zip(['moe', 30], ['larry', 40], ['curly', 50, 'extra data']);
+        assert.deepEqual(_.unzip(zipped), [['moe', 30, void 0], ['larry', 40, void 0], ['curly', 50, 'extra data']], '使用最大数组的长度');
+    })
+
     QUnit.test('findIndex', function (assert) {
         var objects = [
             { a: 0, b: 0 },
