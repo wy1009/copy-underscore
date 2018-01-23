@@ -677,11 +677,11 @@
 
     // Functions - 函数
 
-    var executeBound = function (sourceFn, boundFn, callingContext, args) {
+    var executeBound = function (sourceFn, boundFn, context, callingContext, args) {
         // 普通地调用，而不是被作为构造函数调用（一般只有在构造函数中，this指向的对象才是函数的实例）
         if (!(callingContext instanceof boundFn)) {
             // 被apply进去的参数数组，undefined会变成字符串
-            return sourceFn.apply(callingContext, args)
+            return sourceFn.apply(context, args)
         }
         // callingContext的指向是boundFn的实例，说明此时boundFn正被作为构造函数使用
         // 此时boundFn的返回值就变得没有意义（一般是无返回值）
@@ -695,6 +695,17 @@
         return self
     }
 
+    // 绑定函数func到对象context上。任意可选参数args可以传递给函数func。
+    _.bind = restArgs(function (func, context, args) {
+        if (!_.isFunction(func)) {
+            throw new TypeError('Bind must be called on a function')
+        }
+        var bound = restArgs(function (callArgs) {
+            return executeBound(func, bound, context, this, args.concat(callArgs))
+        })
+        return bound
+    })
+
     // 返回一个带着部分已固定的参数的函数，这部分固定的参数可以用placeholder占位
     _.partial = restArgs(function (func, boundArgs) {
         var placeholder = _.partial.placeholder
@@ -707,7 +718,7 @@
             for (var i = position; i < arguments.length; i ++) {
                 args.push(arguments[i])
             }
-            return executeBound(func, bound, this, args)
+            return executeBound(func, bound, this, this, args)
         }
         return bound
     })
