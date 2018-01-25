@@ -706,6 +706,16 @@
         return bound
     })
 
+    _.bindAll = restArgs(function (obj, methods) {
+        if (!methods.length) {
+            throw new Error('bind must be passed function names')
+        }
+        methods = flatten(methods, false, false)
+        for (var i = 0; i < methods.length; i ++) {
+            obj[methods[i]] = _.bind(obj[methods[i]], obj)
+        }
+    })
+
     // 返回一个带着部分已固定的参数的函数，这部分固定的参数可以用placeholder占位
     _.partial = restArgs(function (func, boundArgs) {
         var placeholder = _.partial.placeholder

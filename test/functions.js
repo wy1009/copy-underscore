@@ -42,6 +42,42 @@
         assert.raises(function () { _.bind('notafunction') }, TypeError, '当传入的不是函数时，抛出错误')
     })
 
+    QUnit.test('bindAll', function (assert) {
+        var curly = { name: 'curly' }
+        var moe = {
+            name: 'moe',
+            getName: function() { return 'name: ' + this.name },
+            sayHi: function() { return 'hi: ' + this.name }
+        }
+        curly.getName = moe.getName
+        _.bindAll(moe, 'getName', 'sayHi')
+        curly.sayHi = moe.sayHi
+        assert.strictEqual(curly.getName(), 'name: curly', '未绑定函数绑在正确的对象向上')
+        assert.strictEqual(curly.sayHi(), 'hi: moe', '绑定函数仍绑定在原对象上')
+
+        curly = {name: 'curly'}
+        moe = {
+        name: 'moe',
+            getName: function() { return 'name: ' + this.name },
+            sayHi: function() { return 'hi: ' + this.name },
+            sayLast: function() { return this.sayHi(_.last(arguments)) }
+        }
+        assert.raises(function() { _.bindAll(moe) }, Error, '没有传入函数名，抛出错误')
+        assert.raises(function() { _.bindAll(moe, 'sayBye') }, TypeError, '如果没有给定key的函数，抛出错误')
+        assert.raises(function() { _.bindAll(moe, 'name') }, TypeError, '当给定的key不是函数时，抛出错误')
+
+        _.bindAll(moe, 'sayHi', 'sayLast')
+        curly.sayHi = moe.sayHi
+        assert.strictEqual(curly.sayHi(), 'hi: moe')
+
+        var sayLast = moe.sayLast
+        assert.strictEqual(sayLast(1, 2, 3, 4, 5, 6, 7, 'Tom'), 'hi: moe')
+
+        _.bindAll(moe, ['getName', 'sayHi'])
+        var getName = moe.getName
+        assert.strictEqual(getName(), 'name: moe', '将参数展开为一个列表')
+    })
+
     QUnit.test('partial', function (assert) {
         var obj = { name: 'moe' },
             func = function () { return this.name + ' ' + _.toArray(arguments).join(' ') }
