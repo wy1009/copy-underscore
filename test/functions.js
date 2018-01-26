@@ -73,7 +73,7 @@
         var sayLast = moe.sayLast
         assert.strictEqual(sayLast(1, 2, 3, 4, 5, 6, 7, 'Tom'), 'hi: moe')
 
-        _.bindAll(moe, ['getName', 'sayHi'])
+        _.bindAll(moe, ['getName', 'sayHi']) // 此处数组中只有一项，则无法测出是否正确。因为将一个只有一项的数组作为取对象值的key传入，会自动取数组中的项
         var getName = moe.getName
         assert.strictEqual(getName(), 'name: moe', '将参数展开为一个列表')
     })
@@ -125,6 +125,15 @@
         assert.strictEqual(func('a'), 5)
 
         _.partial.placeholder = _
+    })
+
+    QUnit.test('delay', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var delayed = false
+        _.delay(function(){ delayed = true }, 100)
+        setTimeout(function(){ assert.notOk(delayed, "didn't delay the function quite yet") }, 50)
+        setTimeout(function(){ assert.ok(delayed, 'delayed the function'); done() }, 150);
     })
 
     QUnit.test('negate', function (assert) {

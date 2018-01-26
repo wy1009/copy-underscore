@@ -735,6 +735,13 @@
 
     _.partial.placeholder = _
 
+    // 延迟一段时间执行func，同时可传入参数
+    _.delay = restArgs(function (func, wait, args) {
+        setTimeout(function () {
+            func.apply(null, args)
+        }, wait)
+    })
+
     // 返回传入断言函数的一个相反值
     _.negate = function (predicate) {
         return function () {
