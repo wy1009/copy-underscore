@@ -193,10 +193,32 @@
         assert.ok(clone.name === 'curly' && moe.name === 'moe', '克隆体可以更改浅属性，不影响本体')
     
         clone.lucky.push(101)
+        assert.strictEqual(_.last(moe.lucky), 101, '对引用属性的改变与原对象共享')
     
         assert.strictEqual(_.clone(void 0), void 0, '原始类型不会被改变')
         assert.strictEqual(_.clone(1), 1, '原始类型不会被改变')
         assert.strictEqual(_.clone(null), null, '原始类型不会被改变')
+    })
+
+    QUnit.test('cloneDeep', function (assert) {
+        var moe = { name: 'moe', lucky: [13, 27, 34], feature: { hair: true } }
+        var clone = _.cloneDeep(moe)
+        assert.strictEqual(clone.name, 'moe')
+
+        clone.name = 'curly'
+        assert.ok(clone.name === 'curly' && moe.name === 'moe', '克隆体可以更改浅属性，不影响本体')
+
+        clone.lucky.push(101)
+        assert.strictEqual(_.last(moe.lucky), 34, '对引用属性的改变不与原对象共享')
+        clone.feature.hair = false
+        assert.strictEqual(moe.feature.hair, true)
+        assert.notStrictEqual(moe, clone)
+        assert.notStrictEqual(moe.lucky, clone.lucky)
+        assert.notStrictEqual(moe.feature, clone.feature)
+
+        assert.strictEqual(_.cloneDeep(void 0), void 0, '原始类型不会被改变')
+        assert.strictEqual(_.cloneDeep(1), 1, '原始类型不会被改变')
+        assert.strictEqual(_.cloneDeep(null), null, '原始类型不会被改变')
     })
 
     QUnit.test('has', function (assert) {

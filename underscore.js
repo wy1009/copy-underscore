@@ -863,6 +863,34 @@
         return _.isArray(obj) ? obj.slice() : _.extend({}, obj)
     }
 
+    var cloneDeep = function (obj, stack) {
+        if (!_.isObject(obj)) {
+            return obj
+        }
+        var keys = !isArrayLike(obj) && _.keys(obj),
+            length = (keys || obj).length,
+            result = keys ? {} : []
+
+        stack || (stack = [[], []])
+        var stacked = _.indexOf(stack[0], obj)
+        if (stacked > -1) {
+            return stack[1][stacked]
+        }
+        stack[0].push(obj)
+        stack[1].push(result)
+
+        for (var i = 0; i < length; i ++) {
+            var key = keys ? keys[i] : i
+            result[key] = cloneDeep(obj[key], stack)
+        }
+        return result
+    }
+
+    // 深复制克隆obj
+    _.cloneDeep = function (obj) {
+        return cloneDeep(obj)
+    }
+
     // 检查一个对象中是否直接在它本身有某个属性，换句话说，不是原型属性
     _.has = function (obj, path) {
         if (!_.isArray(path)) {
