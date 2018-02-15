@@ -742,6 +742,45 @@
         }, wait)
     })
 
+    // 节流
+    _.throttle = function (func, wait, options) {
+        options = options || {}
+        var previous = 0,
+            timeout = null,
+            result
+
+        var throttled = function () {
+            var context = this,
+                args = arguments
+            var now = _.now()
+            if (now - previous >= wait || now - previous < 0) {
+                if (timeout) {
+                    clearTimeout(timeout)
+                    timeout = null
+                }
+                previous = now
+                if (options.leading !== false) {
+                    result = func.apply(this, arguments)
+                }
+            } else if (!timeout && options.trailing !== false) {
+                timeout = setTimeout(function () {
+                    timeout = null
+                    previous = _.now()
+                    result = func.apply(context, args)
+                }, wait)
+            }
+            return result
+        }
+
+        throttled.cancel = function () {
+            clearTimeout(timeout)
+            previous = 0
+            timeout = context = args = null
+        }
+
+        return throttled
+    }
+
     // 返回传入断言函数的一个相反值
     _.negate = function (predicate) {
         return function () {
@@ -1010,6 +1049,11 @@
             min = 0
         }
         return Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
+    // 获取整数时间戳，可能是更快的方式
+    _.now = Date.now || function () {
+        return new Date().getTime()
     }
 
     // 返回一个封装的对象，在封装的对象上调用方法会返回封装对象本身，直到value()方法调用为止

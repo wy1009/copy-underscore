@@ -131,9 +131,301 @@
         assert.expect(2)
         var done = assert.async()
         var delayed = false
-        _.delay(function(){ delayed = true }, 100)
-        setTimeout(function(){ assert.notOk(delayed, "didn't delay the function quite yet") }, 50)
-        setTimeout(function(){ assert.ok(delayed, 'delayed the function'); done() }, 150);
+        _.delay(function () { delayed = true }, 100)
+        setTimeout(function () { assert.notOk(delayed) }, 50)
+        setTimeout(function () { assert.ok(delayed); done() }, 150)
+    })
+
+    QUnit.test('throttle', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 32)
+        throttledIncr()
+        throttledIncr()
+
+        assert.strictEqual(counter, 1, 'incr立即执行且未重复执行')
+        _.delay(function () {
+            assert.strictEqual(counter, 2, '被节流')
+            done()
+        }, 64)
+    })
+
+    QUnit.test('throttle arguments', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var value = 0
+        var update = function (val) {
+            value = val
+        }
+        var throttleUpdate = _.throttle(update, 32)
+        throttleUpdate(1)
+        throttleUpdate(2)
+        _.delay(function () {
+            throttleUpdate(3)
+        }, 64)
+
+        assert.strictEqual(value, 1, '更新值')
+        _.delay(function () {
+            assert.strictEqual(value, 3, '更新至最新值')
+            done()
+        }, 96)
+    })
+
+    QUnit.test('throttle once', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            return ++counter
+        }
+        var throttledIncr = _.throttle(incr, 32)
+        var result = throttledIncr()
+        _.delay(function () {
+            assert.strictEqual(result, 1, '返回值')
+            assert.strictEqual(counter, 1, 'incr只被执行一次')
+            done()
+        }, 64)
+    })
+
+    QUnit.test('throttle twice', function (assert) {
+        assert.expect(1)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 32)
+        throttledIncr()
+        throttledIncr()
+        _.delay(function () {
+            assert.strictEqual(counter, 2, 'incr被调用了两次')
+            done()
+        }, 64)
+    })
+
+    QUnit.test('more throttling', function (assert) {
+        assert.expect(3)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 30)
+        throttledIncr()
+        throttledIncr()
+
+        assert.strictEqual(counter, 1)
+        _.delay(function () {
+            assert.strictEqual(counter, 2)
+            throttledIncr()
+            assert.strictEqual(counter, 3)
+            done()
+        }, 85)
+    })
+
+    QUnit.test('throttle repeatedly with results', function (assert) {
+        assert.expect(6)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            return ++counter
+        }
+        var throttledIncr = _.throttle(incr, 100)
+        var results = []
+        var saveResult = function () {
+            results.push(throttledIncr())
+        }
+        saveResult() // 1
+        saveResult() // 节流 1
+
+        _.delay(saveResult, 50) // 节流 1
+        // 100, trailing to 2
+        _.delay(saveResult, 150) // 节流 2
+        _.delay(saveResult, 160) // 节流 2
+        // trailing to 3
+        _.delay(saveResult, 230) // 节流 3
+        _.delay(function () {
+            assert.strictEqual(results[0], 1, 'incr被执行了一次')
+            assert.strictEqual(results[1], 1, 'incr被节流')
+            assert.strictEqual(results[2], 1, 'incr被节流')
+            assert.strictEqual(results[3], 2, 'incr被执行了两次')
+            assert.strictEqual(results[4], 2, 'incr被节流')
+            assert.strictEqual(results[5], 3, 'incr最后一次被执行')
+            done()
+        }, 300)
+    })
+
+    QUnit.test('throttle triggers trailing call when invoked repeatedly', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var counter = 0
+        var limit = 48
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 32)
+
+        var stamp = new Date()
+        while (new Date() - stamp < limit) {
+            throttledIncr()
+        }
+        var lastCount = counter
+        assert.ok(counter > 1)
+        _.delay(function () {
+            assert.ok(counter > lastCount)
+            done()
+        }, 96)
+    })
+
+    QUnit.test('throttle does not trigger leading call when leading is set to false', function (assert) {
+        assert.expect(3)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 100, { leading: false })
+
+        throttledIncr()
+        _.delay(throttledIncr, 50)
+        _.delay(throttledIncr, 60)
+        _.delay(throttledIncr, 200)
+        assert.strictEqual(counter, 0)
+
+        _.delay(function () {
+            assert.strictEqual(counter, 1)
+        }, 250)
+
+        _.delay(function () {
+            assert.strictEqual(counter, 2)
+            done()
+        }, 350)
+    })
+
+    QUnit.test('one more throttle with leading: false test', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 100, { leading: false })
+
+        var time = new Date()
+        while (new Date() - time < 350) {
+            throttledIncr()
+        }
+
+        assert.ok(counter <= 3)
+        _.delay(function () {
+            assert.ok(counter <= 4)
+            done()
+        }, 200)
+    })
+
+    QUnit.test('throttle does not trigger trailing call when trailing is set to false', function (assert) {
+        assert.expect(4)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 60, { trailing: false })
+        throttledIncr()
+        throttledIncr()
+        throttledIncr()
+        assert.strictEqual(counter, 1)
+        _.delay(function () {
+            assert.strictEqual(counter, 1)
+            throttledIncr()
+            throttledIncr()
+            assert.strictEqual(counter, 2)
+            _.delay(function() {
+                assert.strictEqual(counter, 2)
+                done()
+            }, 96)
+        }, 96)
+    })
+
+    QUnit.test('throttle continues to function after system time is set backwards', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () {
+            counter ++
+        }
+        var throttledIncr = _.throttle(incr, 100)
+        var origNowFunc = _.now
+
+        throttledIncr()
+        assert.strictEqual(counter, 1)
+        _.now = function () {
+            return new Date(2013, 0, 1, 1, 1, 1)
+        }
+
+        _.delay(function () {
+            throttledIncr()
+            assert.strictEqual(counter, 2)
+            done()
+            _.now = origNowFunc
+        }, 200)
+    })
+
+    QUnit.test('throttle re-entrant', function (assert) {
+        assert.expect(2);
+        var done = assert.async()
+        var sequence = [['b1', 'b2'], ['c1', 'c2']]
+        var value = ''
+        var append = function (arg) {
+            value += this + arg
+            var args = sequence.pop()
+            if (args) {
+                throttledAppend.call(args[0], args[1])
+            }
+        }
+        var throttledAppend = _.throttle(append, 32)
+        throttledAppend.call('a1', 'a2')
+        assert.strictEqual(value, 'a1a2')
+        _.delay(function () {
+            assert.strictEqual(value, 'a1a2c1c2b1b2', 'append was throttled successfully')
+            done()
+        }, 100)
+    })
+
+    QUnit.test('throttle cancel', function (assert) {
+        var done = assert.async()
+        var counter = 0
+        var incr = function () { counter++ }
+        var throttledIncr = _.throttle(incr, 32)
+        throttledIncr()
+        throttledIncr.cancel()
+        throttledIncr()
+        throttledIncr()
+
+        assert.strictEqual(counter, 2, 'incr was called immediately')
+        _.delay(function () {
+            assert.strictEqual(counter, 3, 'incr was throttled')
+            done()
+        }, 64)
+    })
+
+    QUnit.test('throttle cancel with leading: false', function (assert) {
+        var done = assert.async()
+        var counter = 0
+        var incr = function(){ counter ++ }
+        var throttledIncr = _.throttle(incr, 32, {leading: false})
+        throttledIncr()
+        throttledIncr.cancel()
+
+        assert.strictEqual(counter, 0, 'incr was throttled')
+        _.delay(function(){
+            assert.strictEqual(counter, 0, 'incr was throttled')
+            done()
+        }, 64)
     })
 
     QUnit.test('negate', function (assert) {
