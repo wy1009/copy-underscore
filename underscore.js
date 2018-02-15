@@ -753,7 +753,11 @@
             var context = this,
                 args = arguments
             var now = _.now()
-            if (now - previous >= wait || now - previous < 0) {
+            if (options.leading === false) {
+                previous = now
+            }
+            var passedTime = now - previous
+            if (passedTime >= wait || passedTime < 0) {
                 if (timeout) {
                     clearTimeout(timeout)
                     timeout = null
@@ -767,7 +771,7 @@
                     timeout = null
                     previous = _.now()
                     result = func.apply(context, args)
-                }, wait)
+                }, wait - passedTime)
             }
             return result
         }

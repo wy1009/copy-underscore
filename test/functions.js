@@ -282,7 +282,7 @@
     })
 
     QUnit.test('throttle does not trigger leading call when leading is set to false', function (assert) {
-        assert.expect(3)
+        // assert.expect(3)
         var done = assert.async()
         var counter = 0
         var incr = function () {
@@ -290,18 +290,19 @@
         }
         var throttledIncr = _.throttle(incr, 100, { leading: false })
 
-        throttledIncr()
-        _.delay(throttledIncr, 50)
-        _.delay(throttledIncr, 60)
-        _.delay(throttledIncr, 200)
+        throttledIncr() // 0
+        _.delay(throttledIncr, 50) // 节流 0
+        _.delay(throttledIncr, 60) // 节流 0
+        // 100 to 1
+        _.delay(throttledIncr, 200) // 1
         assert.strictEqual(counter, 0)
 
         _.delay(function () {
-            assert.strictEqual(counter, 1)
+            assert.strictEqual(counter, 1, '250ms')
         }, 250)
 
         _.delay(function () {
-            assert.strictEqual(counter, 2)
+            assert.strictEqual(counter, 2, '350ms')
             done()
         }, 350)
     })
