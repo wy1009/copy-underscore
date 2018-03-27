@@ -429,6 +429,145 @@
         }, 64)
     })
 
+    QUnit.test('debounce', function (assert) {
+        assert.expect(1)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () { counter ++ }
+        var debouncedIncr = _.debounce(incr, 32)
+        debouncedIncr()
+        debouncedIncr()
+        _.delay(debouncedIncr, 16)
+        _.delay(function () {
+            assert.strictEqual(counter, 1, 'incr was debounced')
+            done()
+        }, 96)
+    })
+
+    QUnit.test('debounce cancel', function (assert) {
+        assert.expect(1)
+        var done = assert.async()
+        var counter = 0
+        var incr = function () { counter ++ }
+        var debouncedIncr = _.debounce(incr, 32)
+        debouncedIncr()
+        debouncedIncr.cancel()
+        _.delay(function () {
+            assert.strictEqual(counter, 0, 'incr was not called')
+            done()
+        }, 96)
+    })
+
+    QUnit.test('debounce asap', function (assert) {
+        assert.expect(6)
+        var done = assert.async()
+        var a, b, c
+        var counter = 0
+        var incr = function () { return ++ counter }
+        var debouncedIncr = _.debounce(incr, 64, true)
+        a = debouncedIncr()
+        b = debouncedIncr()
+        assert.strictEqual(a, 1)
+        assert.strictEqual(b, 1)
+        assert.strictEqual(counter, 1, 'incr马上被执行')
+        _.delay(debouncedIncr, 16)
+        _.delay(debouncedIncr, 32)
+        _.delay(debouncedIncr, 48)
+        _.delay(function () {
+            assert.strictEqual(counter, 1, 'incr被防抖')
+            c = debouncedIncr()
+            assert.strictEqual(c, 2)
+            assert.strictEqual(counter, 2, 'incr被再次调用')
+            done()
+        }, 128)
+    })
+
+    QUnit.test('debounce asap cancel', function (assert) {
+        assert.expect(4)
+        var done = assert.async()
+        var a, b
+        var counter = 0
+        var incr = function(){ return ++ counter }
+        var debouncedIncr = _.debounce(incr, 64, true)
+        a = debouncedIncr()
+        debouncedIncr.cancel()
+        b = debouncedIncr()
+        assert.strictEqual(a, 1)
+        assert.strictEqual(b, 2)
+        assert.strictEqual(counter, 2, 'incr立即被执行')
+        _.delay(debouncedIncr, 16)
+        _.delay(debouncedIncr, 32)
+        _.delay(debouncedIncr, 48)
+        _.delay(function () {
+            assert.strictEqual(counter, 2, 'incr was debounced')
+            done()
+        }, 128)
+    })
+
+    QUnit.test('debounce asap recursively', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var counter = 0
+        var debouncedIncr = _.debounce(function () {
+            counter ++
+            if (counter < 10) {
+                debouncedIncr()
+            }
+        }, 32, true)
+        debouncedIncr()
+        assert.strictEqual(counter, 1, 'incr被立即执行')
+        _.delay(function () {
+            assert.strictEqual(counter, 1, 'incr被防抖')
+            done()
+        }, 96)
+    })
+
+    QUnit.test('debounce after system time is set backwards', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var counter = 0
+        var origNowFunc = _.now
+        var debouncedIncr = _.debounce(function () {
+            counter ++
+        }, 100, true)
+
+        debouncedIncr()
+        assert.strictEqual(counter, 1, 'incr was called immediately')
+
+        _.now = function () {
+            return new Date(2013, 0, 1, 1, 1, 1)
+        }
+
+        _.delay(function () {
+            debouncedIncr()
+            assert.strictEqual(counter, 2, 'incr was debounced successfully')
+            done()
+            _.now = origNowFunc
+        }, 200)
+    })
+
+    QUnit.test('debounce re-entrant', function (assert) {
+        assert.expect(2)
+        var done = assert.async()
+        var sequence = [['b1', 'b2']]
+        var value = ''
+        var debouncedAppend
+        var append = function (arg) {
+            value += this + arg
+            var args = sequence.pop()
+            if (args) {
+                debouncedAppend.call(args[0], args[1])
+            }
+        }
+        debouncedAppend = _.debounce(append, 32)
+        debouncedAppend.call('a1', 'a2')
+        assert.strictEqual(value, '')
+        _.delay(function () {
+            assert.strictEqual(value, 'a1a2b1b2', 'append was debounced successfully')
+            done()
+        }, 100)
+    })
+
     QUnit.test('negate', function (assert) {
         var isOdd = function (n) {
             return n & 1

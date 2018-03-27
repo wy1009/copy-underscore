@@ -737,8 +737,8 @@
 
     // 延迟一段时间执行func，同时可传入参数
     _.delay = restArgs(function (func, wait, args) {
-        setTimeout(function () {
-            func.apply(null, args)
+        return setTimeout(function () {
+            return func.apply(null, args)
         }, wait)
     })
 
@@ -779,10 +779,47 @@
         throttled.cancel = function () {
             clearTimeout(timeout)
             previous = 0
-            timeout = context = args = null
+            timeout = null
         }
 
         return throttled
+    }
+
+    // 防抖
+    _.debounce = function (func, wait, immediate) {
+        var timeout = null,
+            result
+
+        var debounced = function () {
+            var context = this,
+                args = arguments
+            if (timeout) {
+                clearTimeout(timeout)
+            }
+            if (immediate) {
+                var callNow = !timeout
+                timeout = _.delay(function () {
+                    timeout = null
+                }, wait)
+                if (callNow) {
+                    result = func.apply(context, args)
+                }
+            } else {
+                timeout = _.delay(function () {
+                    timeout = null
+                    result = func.apply(context, args)
+                }, wait)
+            }
+
+            return result
+        }
+
+        debounced.cancel = function () {
+            clearTimeout(timeout)
+            timeout = null
+        }
+
+        return debounced
     }
 
     // 返回传入断言函数的一个相反值
