@@ -127,6 +127,54 @@
         _.partial.placeholder = _
     })
 
+    QUnit.test('memoize', function (assert) {
+        var fib = function (n) {
+            return n < 2 ? n : fib(n - 1) + fib(n - 2)
+        }
+        assert.strictEqual(fib(10), 55, 'a memoized version of fibonacci produces identical results')
+        fib = _.memoize(fib)
+        assert.strictEqual(fib(10), 55, 'a memoized version of fibonacci produces identical results')
+    
+        var o = function (str) {
+            return str
+        }
+        var fastO = _.memoize(o)
+        assert.strictEqual(o('toString'), 'toString', 'checks hasOwnProperty')
+        assert.strictEqual(fastO('toString'), 'toString', 'checks hasOwnProperty')
+
+        var upper = _.memoize(function(s) {
+            return s.toUpperCase()
+        })
+        assert.strictEqual(upper('foo'), 'FOO')
+        assert.strictEqual(upper('bar'), 'BAR')
+        assert.deepEqual(upper.cache, {foo: 'FOO', bar: 'BAR'})
+        upper.cache = {foo: 'BAR', bar: 'FOO'}
+        assert.strictEqual(upper('foo'), 'BAR')
+        assert.strictEqual(upper('bar'), 'FOO')
+    
+        var hashed = _.memoize(function (key) {
+        //https://github.com/jashkenas/underscore/pull/1679#discussion_r13736209
+            assert.ok(/[a-z]+/.test(key), 'hasher doesn\'t change keys')
+            return key
+        }, function(key) {
+            return key.toUpperCase()
+        })
+        hashed('yep')
+        assert.deepEqual(hashed.cache, {YEP: 'yep'}, 'takes a hasher')
+    
+        // Test that the hash function can be used to swizzle the key.
+        var objCacher = _.memoize(function(value, key) {
+            return {key: key, value: value}
+        }, function(value, key) {
+            return key
+        })
+        var myObj = objCacher('a', 'alpha')
+        var myObjAlias = objCacher('b', 'alpha')
+        assert.notStrictEqual(myObj, void 0, 'object is created if second argument used as key')
+        assert.strictEqual(myObj, myObjAlias, 'object is cached if second argument used as key')
+        assert.strictEqual(myObj.value, 'a', 'object is not modified if second argument used as key')
+    })
+
     QUnit.test('delay', function (assert) {
         assert.expect(2)
         var done = assert.async()

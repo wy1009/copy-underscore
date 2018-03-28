@@ -735,6 +735,19 @@
 
     _.partial.placeholder = _
 
+    // 制造一个函数，可以缓存自己的运行结果
+    _.memoize = function (func, hasher) {
+        var memoize = function (firstArg) {
+            var key = (hasher ? hasher.apply(this, arguments) : firstArg) + ''
+            if (!_.has(memoize.cache, key)) {
+                memoize.cache[key] = func.apply(this, arguments)
+            }
+            return memoize.cache[key]
+        }
+        memoize.cache = {}
+        return memoize
+    }
+
     // 延迟一段时间执行func，同时可传入参数
     _.delay = restArgs(function (func, wait, args) {
         return setTimeout(function () {
