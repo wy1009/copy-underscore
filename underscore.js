@@ -755,6 +755,13 @@
         }, wait)
     })
 
+    // 在当前调用栈清空后再执行
+    _.defer = restArgs(function (func, args) {
+        return setTimeout(function () {
+            return func.apply(null, args)
+        }, 0)
+    })
+
     // 节流
     _.throttle = function (func, wait, options) {
         options = options || {}

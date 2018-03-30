@@ -184,6 +184,17 @@
         setTimeout(function () { assert.ok(delayed); done() }, 150)
     })
 
+    QUnit.test('defer', function (assert) {
+        assert.expect(1)
+        var done = assert.async()
+        var deferred = false
+        _.defer(function (bool) { deferred = bool }, true)
+        _.delay(function () {
+            assert.ok(deferred, 'deferred the function')
+            done()
+        }, 50)
+    })
+
     QUnit.test('throttle', function (assert) {
         assert.expect(2)
         var done = assert.async()
