@@ -842,6 +842,18 @@
         return debounced
     }
 
+    _.once = function (func) {
+        var runed = false
+        var result
+        return restArgs(function (args) {
+            if (!runed) {
+                result = func.apply(this, args)
+                runed = true
+            }
+            return result
+        })
+    }
+
     // 返回传入断言函数的一个相反值
     _.negate = function (predicate) {
         return function () {

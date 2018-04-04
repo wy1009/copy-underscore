@@ -627,6 +627,16 @@
         }, 100)
     })
 
+    QUnit.test('once', function (assert) {
+        var num = 0
+        var increment = _.once(function(){ return ++num })
+        increment()
+        increment()
+        assert.strictEqual(num, 1)
+
+        assert.strictEqual(increment(), 1, 'stores a memo to the last value')
+    })
+
     QUnit.test('negate', function (assert) {
         var isOdd = function (n) {
             return n & 1
