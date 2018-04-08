@@ -842,6 +842,20 @@
         return debounced
     }
 
+    function runFuncBeforeOrAfter (type) {
+        return function (count, func) {
+            var runedCount = 1
+            var result
+            return restArgs(function (args) {
+                if ((type === 'after' && runedCount >= count) || (type === 'before' && runedCount < count)) {
+                    runedCount ++
+                    result = func.apply(this, args)
+                }
+                return result
+            })
+        }
+    }
+
     _.once = function (func) {
         var runed = false
         var result
@@ -853,6 +867,8 @@
             return result
         })
     }
+
+    _.before = runFuncBeforeOrAfter('before')
 
     // 返回传入断言函数的一个相反值
     _.negate = function (predicate) {
