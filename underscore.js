@@ -847,8 +847,8 @@
         var result
         return restArgs(function (args) {
             if (!runed) {
-                result = func.apply(this, args)
                 runed = true
+                result = func.apply(this, args)
             }
             return result
         })

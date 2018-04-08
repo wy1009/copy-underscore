@@ -629,12 +629,21 @@
 
     QUnit.test('once', function (assert) {
         var num = 0
-        var increment = _.once(function(){ return ++num })
+        var increment = _.once(function () { return ++num })
         increment()
         increment()
         assert.strictEqual(num, 1)
 
         assert.strictEqual(increment(), 1, 'stores a memo to the last value')
+    })
+
+    QUnit.test('Recursive onced function', function (assert) {
+        assert.expect(1)
+        var f = _.once(function () {
+            assert.ok(true)
+            f()
+        })
+        f()
     })
 
     QUnit.test('negate', function (assert) {
