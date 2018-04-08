@@ -12,6 +12,21 @@
     QUnit.test('noop', function (assert) {
         assert.strictEqual(_.noop('curly', 'larry', 'moe'), void 0, '应该永远返回undefined')
     })
+
+    QUnit.test('times', function (assert) {
+        var vals = []
+        _.times(3, function(i) { vals.push(i) })
+        assert.deepEqual(vals, [0, 1, 2], 'is 0 indexed')
+        vals = []
+        _(3).times(function(i) { vals.push(i) })
+        assert.deepEqual(vals, [0, 1, 2], 'works as a wrapper')
+        // collects return values
+        assert.deepEqual([0, 1, 2], _.times(3, function(i) { return i }), 'collects return values')
+
+        assert.deepEqual(_.times(0, _.identity), [])
+        assert.deepEqual(_.times(-1, _.identity), [])
+        assert.deepEqual(_.times(parseFloat('-Infinity'), _.identity), [])
+    })
     
     QUnit.test('random', function (assert) {
         var array = _.range(1000)

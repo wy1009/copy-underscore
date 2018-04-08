@@ -1131,6 +1131,16 @@
     // 默认可选的回调函数
     _.noop = function () {}
 
+    // 调用给定的迭代函数N次
+    _.times = function (n, iteratee, context) {
+        iteratee = cb(iteratee, context)
+        var result = []
+        for (var i = 0; i < n; i ++) {
+            result.push(iteratee(i))
+        }
+        return result
+    }
+
     // 生成min和max之间的随机整数，包括min和max。如果只传一个参数，则返回0到这个参数之间的整数
     _.random = function (min, max) {
         if (max === null || max === void 0) {
