@@ -659,11 +659,11 @@
         assert.strictEqual(testBefore(0, 0), 0, 'before(0) should not fire immediately')
         assert.strictEqual(testBefore(0, 1), 0, 'before(0) should not fire when first invoked')
 
-        // var context = { num: 0 }
-        // var increment = _.before(3, function () { return ++this.num })
-        // _.times(10, increment, context)
-        // assert.strictEqual(increment(), 2, 'stores a memo to the last value')
-        // assert.strictEqual(context.num, 2, 'provides context')
+        var context = { num: 0 }
+        var increment = _.before(3, function () { return ++this.num })
+        _.times(10, increment, context)
+        assert.strictEqual(increment(), 2, 'stores a memo to the last value')
+        assert.strictEqual(context.num, 2, 'provides context')
     })
 
     QUnit.test('negate', function (assert) {
