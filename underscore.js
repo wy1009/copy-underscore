@@ -964,8 +964,17 @@
         var result = []
         var keys = _.keys(obj)
         for (var i = 0; i < keys.length; i ++) {
-            var key = keys[i]
-            result[i] = [key, obj[key]]
+            result[i] = [keys[i], obj[keys[i]]]
+        }
+        return result
+    }
+
+    // 将对象的key和value对换
+    _.invert = function (obj) {
+        var result = {}
+        var keys = _.keys(obj)
+        for (var i = 0; i < keys.length; i ++) {
+            result[obj[keys[i]]] = keys[i]
         }
         return result
     }

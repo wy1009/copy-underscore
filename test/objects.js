@@ -136,6 +136,15 @@
         assert.deepEqual(_.pairs({ one: 1, two: 2, length: 3 }), [['one', 1], ['two', 2], ['length', 3]], '... even when one of them is "length"')
     })
 
+    QUnit.test('invert', function (assert) {
+        var obj = { first: 'Moe', second: 'Larry', third: 'Curly' }
+        assert.deepEqual(_.keys(_.invert(obj)), ['Moe', 'Larry', 'Curly'], 'can invert an object')
+        assert.deepEqual(_.invert(_.invert(obj)), obj, 'two inverts gets you back where you started')
+
+        obj = { length: 3 }
+        assert.strictEqual(_.invert(obj)['3'], 'length', 'can invert an object with "length"')
+    })
+
     QUnit.test('functions', function (assert) {
         var obj = { a: 'dash', b: _.map, c: /yo/, d: _.reduce }
         assert.deepEqual(['b', 'd'], _.functions(obj), '可以获得传入对象的方法名')
