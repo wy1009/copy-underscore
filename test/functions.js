@@ -705,4 +705,30 @@
         assert.strictEqual(_.negate(isOdd)(2), true)
         assert.strictEqual(_.negate(isOdd)(1), false)
     })
+
+    QUnit.test('compose', function (assert) {
+        var greet = function (name) { return 'hi: ' + name }
+        var exclaim = function (sentence) { return sentence + '!' }
+        var composed = _.compose(exclaim, greet)
+        assert.strictEqual(composed('moe'), 'hi: moe!', 'can compose a function that takes another')
+
+        composed = _.compose(greet, exclaim)
+        assert.strictEqual(composed('moe'), 'hi: moe!', 'in this case, the functions are also commutative')
+
+        // f(g(h(x, y, z)))
+        function h (x, y, z) {
+        assert.strictEqual(arguments.length, 3, 'First function called with multiple args')
+            return z * y
+        }
+        function g(x) {
+        assert.strictEqual(arguments.length, 1, 'Composed function is called with 1 argument')
+            return x
+        }
+        function f(x) {
+        assert.strictEqual(arguments.length, 1, 'Composed function is called with 1 argument')
+            return x * 2
+        }
+        composed = _.compose(f, g, h)
+        assert.strictEqual(composed(1, 2, 3), 12)
+    })
 })()

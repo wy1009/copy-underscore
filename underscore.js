@@ -877,6 +877,18 @@
         }
     }
 
+    // 复合函数，将前一个函数对返回结果作为后一个函数对参数
+    _.compose = restArgs(function (funcs) {
+        return function () {
+            var startIndex = funcs.length - 1
+            var result = funcs[startIndex].apply(this, arguments)
+            while (startIndex --) {
+                result = funcs[startIndex].call(this, result)
+            }
+            return result
+        }
+    })
+
     // Objects - 对象
 
     // 用于处理IE<9的bug
