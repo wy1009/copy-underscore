@@ -844,11 +844,11 @@
 
     function runFuncBeforeOrAfter (type) {
         return function (count, func) {
-            var runedCount = 1
+            var runedCount = 0
             var result
             return restArgs(function (args) {
+                runedCount ++
                 if ((type === 'after' && runedCount >= count) || (type === 'before' && runedCount < count)) {
-                    runedCount ++
                     result = func.apply(this, args)
                 }
                 return result
@@ -856,7 +856,11 @@
         }
     }
 
+    // 创建一个方法，运行不超过N次
     _.before = runFuncBeforeOrAfter('before')
+
+    // 创建一个方法，调用N次后再运行
+    _.after = runFuncBeforeOrAfter('after')
 
     _.once = _.partial(_.before, 2)
 

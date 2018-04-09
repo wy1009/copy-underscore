@@ -647,10 +647,10 @@
     })
 
     QUnit.test('before', function(assert) {
-        var testBefore = function(beforeAmount, timesCalled) {
+        var testBefore = function (beforeAmount, timesCalled) {
             var beforeCalled = 0
             var before = _.before(beforeAmount, function () { beforeCalled++ })
-            while (timesCalled--) before()
+            while (timesCalled --) before()
             return beforeCalled
         }
 
@@ -660,10 +660,26 @@
         assert.strictEqual(testBefore(0, 1), 0, 'before(0) should not fire when first invoked')
 
         var context = { num: 0 }
-        var increment = _.before(3, function () { return ++this.num })
+        var increment = _.before(3, function () { return ++ this.num })
         _.times(10, increment, context)
         assert.strictEqual(increment(), 2, 'stores a memo to the last value')
         assert.strictEqual(context.num, 2, 'provides context')
+    })
+
+    QUnit.test('after', function (assert) {
+        var testAfter = function (afterAmount, timesCalled) {
+            var afterCalled = 0
+            var after = _.after(afterAmount, function () {
+                afterCalled ++
+            })
+            while (timesCalled --) after()
+            return afterCalled
+        }
+    
+        assert.strictEqual(testAfter(5, 5), 1, 'after(N) should fire after being called N times')
+        assert.strictEqual(testAfter(5, 4), 0, 'after(N) should not fire unless called N times')
+        assert.strictEqual(testAfter(0, 0), 0, 'after(0) should not fire immediately')
+        assert.strictEqual(testAfter(0, 1), 1, 'after(0) should fire when first invoked')
     })
 
     QUnit.test('negate', function (assert) {
