@@ -131,6 +131,11 @@
         assert.deepEqual(_.mapObject(protoObj, _.identity), { a: 1 }, 'ignore inherited values from prototypes')
     })
 
+    QUnit.test('pairs', function (assert) {
+        assert.deepEqual(_.pairs({ one: 1, two: 2 }), [['one', 1], ['two', 2]], 'can convert an object into pairs')
+        assert.deepEqual(_.pairs({ one: 1, two: 2, length: 3 }), [['one', 1], ['two', 2], ['length', 3]], '... even when one of them is "length"')
+    })
+
     QUnit.test('functions', function (assert) {
         var obj = { a: 'dash', b: _.map, c: /yo/, d: _.reduce }
         assert.deepEqual(['b', 'd'], _.functions(obj), '可以获得传入对象的方法名')

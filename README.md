@@ -1,3 +1,3 @@
 # underscore
 
-抄一遍underscore！><
+写一遍underscore！><
