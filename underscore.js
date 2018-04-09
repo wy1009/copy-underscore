@@ -856,19 +856,9 @@
         }
     }
 
-    _.once = function (func) {
-        var runed = false
-        var result
-        return restArgs(function (args) {
-            if (!runed) {
-                runed = true
-                result = func.apply(this, args)
-            }
-            return result
-        })
-    }
-
     _.before = runFuncBeforeOrAfter('before')
+
+    _.once = _.partial(_.before, 2)
 
     // 返回传入断言函数的一个相反值
     _.negate = function (predicate) {
