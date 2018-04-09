@@ -947,6 +947,17 @@
         return values
     }
 
+    _.mapObject = function (obj, iteratee, context) {
+        iteratee = cb(iteratee, context)
+        var result = {}
+        var keys = _.keys(obj)
+        for (var i = 0; i < keys.length; i ++) {
+            var key = keys[i]
+            result[key] = iteratee(obj[key], key, obj)
+        }
+        return result
+    }
+
     // 返回一个对象中所有的方法名，且排序
     _.functions = _.methods = function (obj) {
         var names = []

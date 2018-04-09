@@ -78,6 +78,59 @@
         assert.deepEqual(_.values({ one: 1, two: 2, length: 3 }), [1, 2, 3])
     })
 
+    QUnit.test('mapObject', function (assert) {
+        var obj = { a: 1, b: 2 }
+        var objects = {
+            a: { a: 0, b: 0 },
+            b: { a: 1, b: 1 },
+            c: { a: 2, b: 2 }
+        }
+
+        assert.deepEqual(_.mapObject(obj, function (val) {
+            return val * 2
+        }), { a: 2, b: 4 }, 'simple objects')
+
+        assert.deepEqual(_.mapObject(objects, function (val) {
+            return _.reduce(val, function (memo, v) {
+                return memo + v
+            }, 0)
+        }), { a: 0, b: 2, c: 4 }, 'nested objects')
+
+        assert.deepEqual(_.mapObject(obj, function (val, key, o) {
+            return o[key] * 2
+        }), { a: 2, b: 4 }, 'correct keys')
+
+        assert.deepEqual(_.mapObject([1, 2], function (val) {
+            return val * 2
+        }), { 0: 2, 1: 4 }, 'check behavior for arrays')
+
+        assert.deepEqual(_.mapObject(obj, function (val) {
+            return val * this.multiplier
+        }, { multiplier: 3 }), { a: 3, b: 6 }, 'keep context')
+
+        assert.deepEqual(_.mapObject({ a: 1 }, function () {
+            return this.length
+        }, [1, 2]), { a: 2 }, 'called with context')
+
+        var ids = _.mapObject({ length: 2, 0: { id: '1' }, 1: { id: '2' } }, function (n) {
+            return n.id
+        })
+        assert.deepEqual(ids, { length: void 0, 0: '1', 1: '2' }, 'Check with array-like objects')
+
+        // Passing a property name like _.pluck.
+        var people = { a: { name: 'moe', age: 30 }, b: { name: 'curly', age: 50 } }
+        assert.deepEqual(_.mapObject(people, 'name'), { a: 'moe', b: 'curly' }, 'predicate string map to object properties')
+
+        _.each([null, void 0, 1, 'abc', [], {}, void 0], function (val) {
+            assert.deepEqual(_.mapObject(val, _.identity), {}, 'mapValue identity')
+        })
+
+        var Proto = function () { this.a = 1 }
+        Proto.prototype.b = 1
+        var protoObj = new Proto()
+        assert.deepEqual(_.mapObject(protoObj, _.identity), { a: 1 }, 'ignore inherited values from prototypes')
+    })
+
     QUnit.test('functions', function (assert) {
         var obj = { a: 'dash', b: _.map, c: /yo/, d: _.reduce }
         assert.deepEqual(['b', 'd'], _.functions(obj), '可以获得传入对象的方法名')
