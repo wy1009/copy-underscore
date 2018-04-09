@@ -682,6 +682,22 @@
         assert.strictEqual(testAfter(0, 1), 1, 'after(0) should fire when first invoked')
     })
 
+    QUnit.test('wrap', function (assert) {
+        var greet = function (name) { return 'hi: ' + name }
+        var backwards = _.wrap(greet, function (func, name) { return func(name) + ' ' + name.split('').reverse().join('') })
+        assert.strictEqual(backwards('moe'), 'hi: moe eom', 'wrapped the salutation function')
+
+        var inner = function () { return 'Hello ' }
+        var obj = {name: 'Moe'}
+        obj.hi = _.wrap(inner, function (fn) { return fn() + this.name })
+        assert.strictEqual(obj.hi(), 'Hello Moe')
+
+        var noop = function () {}
+        var wrapped = _.wrap(noop, function () { return Array.prototype.slice.call(arguments, 0) })
+        var ret = wrapped(['whats', 'your'], 'vector', 'victor')
+        assert.deepEqual(ret, [noop, ['whats', 'your'], 'vector', 'victor'])
+    })
+
     QUnit.test('negate', function (assert) {
         var isOdd = function (n) {
             return n & 1

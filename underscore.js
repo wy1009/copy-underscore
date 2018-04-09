@@ -862,7 +862,13 @@
     // 创建一个方法，调用N次后再运行
     _.after = runFuncBeforeOrAfter('after')
 
+    // 创建一个方法，只能被调用一次
     _.once = _.partial(_.before, 2)
+
+    // 将func封装入wrapper中
+    _.wrap = function (func, wrapper) {
+        return _.partial(wrapper, func)
+    }
 
     // 返回传入断言函数的一个相反值
     _.negate = function (predicate) {
