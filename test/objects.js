@@ -145,6 +145,32 @@
         assert.strictEqual(_.invert(obj)['3'], 'length', 'can invert an object with "length"')
     })
 
+    QUnit.test('create', function (assert) {
+        var Parent = function () { };
+        Parent.prototype = { foo: function () { }, bar: 2 };
+
+        _.each(['foo', null, void 0, 1], function (val) {
+            assert.deepEqual(_.create(val), {}, 'should return empty object when a non-object is provided');
+        });
+
+        assert.ok(_.create([]) instanceof Array, 'should return new instance of array when array is provided');
+
+        var Child = function () { };
+        Child.prototype = _.create(Parent.prototype);
+        assert.ok(new Child instanceof Parent, 'object should inherit prototype');
+
+        var func = function () { };
+        Child.prototype = _.create(Parent.prototype, { func: func });
+        assert.strictEqual(Child.prototype.func, func, 'properties should be added to object');
+
+        Child.prototype = _.create(Parent.prototype, { constructor: Child });
+        assert.strictEqual(Child.prototype.constructor, Child);
+
+        Child.prototype.foo = 'foo';
+        var created = _.create(Child.prototype, new Child);
+        assert.notOk(created.hasOwnProperty('foo'), 'should only add own properties');
+    })
+
     QUnit.test('functions', function (assert) {
         var obj = { a: 'dash', b: _.map, c: /yo/, d: _.reduce }
         assert.deepEqual(['b', 'd'], _.functions(obj), '可以获得传入对象的方法名')

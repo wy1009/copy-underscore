@@ -979,6 +979,25 @@
         return result
     }
 
+    // 创建一个特定prototype的对象
+    _.create = function (obj, props) {
+        if (!_.isObject(obj)) {
+            return {}
+        }
+        var result
+        if (Object.create) {
+            result = Object.create(obj)
+        } else {
+            var F = function () { }
+            F.prototype = obj
+            result = new F()
+        }
+        _.each(props, function (val, key) {
+            result[key] = val
+        })
+        return result
+    }
+
     // 返回一个对象中所有的方法名，且排序
     _.functions = _.methods = function (obj) {
         var names = []
