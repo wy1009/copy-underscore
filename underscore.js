@@ -64,7 +64,7 @@
     var Ctor = function () {}
     var baseCreate = function (prototype) {
         if (!_.isObject(prototype)) {
-            return
+            return {}
         }
         if (Object.create) {
             return Object.create(prototype)
@@ -981,20 +981,10 @@
 
     // 创建一个特定prototype的对象
     _.create = function (obj, props) {
-        if (!_.isObject(obj)) {
-            return {}
+        var result = baseCreate(obj)
+        if (props) {
+            _.extendOwn(result, props)
         }
-        var result
-        if (Object.create) {
-            result = Object.create(obj)
-        } else {
-            var F = function () { }
-            F.prototype = obj
-            result = new F()
-        }
-        _.each(props, function (val, key) {
-            result[key] = val
-        })
         return result
     }
 
