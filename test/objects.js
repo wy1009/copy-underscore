@@ -277,6 +277,47 @@
         assert.deepEqual(result, { a: 1, 0: 1, 1: 2, length: 2 }, '处理array-like对象应像普通对象一样')
     })
 
+    QUnit.test('pick', function (assert) {
+        var result;
+        result = _.pick({ a: 1, b: 2, c: 3 }, 'a', 'c');
+        assert.deepEqual(result, { a: 1, c: 3 }, 'can restrict properties to those named');
+        result = _.pick({ a: 1, b: 2, c: 3 }, ['b', 'c']);
+        assert.deepEqual(result, { b: 2, c: 3 }, 'can restrict properties to those named in an array');
+        result = _.pick({ a: 1, b: 2, c: 3 }, ['a'], 'b');
+        assert.deepEqual(result, { a: 1, b: 2 }, 'can restrict properties to those named in mixed args');
+        result = _.pick(['a', 'b'], 1);
+        assert.deepEqual(result, { 1: 'b' }, 'can pick numeric properties');
+
+        _.each([null, void 0], function (val) {
+            assert.deepEqual(_.pick(val, 'hasOwnProperty'), {}, 'Called with null/undefined');
+            assert.deepEqual(_.pick(val, _.constant(true)), {});
+        });
+        assert.deepEqual(_.pick(5, 'toString', 'b'), { toString: Number.prototype.toString }, 'can iterate primitives');
+
+        var data = { a: 1, b: 2, c: 3 };
+        var callback = function (value, key, object) {
+            assert.strictEqual(key, { 1: 'a', 2: 'b', 3: 'c' }[value]);
+            assert.strictEqual(object, data);
+            return value !== this.value;
+        };
+        result = _.pick(data, callback, { value: 2 });
+        assert.deepEqual(result, { a: 1, c: 3 }, 'can accept a predicate and context');
+
+        var Obj = function () { };
+        Obj.prototype = { a: 1, b: 2, c: 3 };
+        var instance = new Obj();
+        assert.deepEqual(_.pick(instance, 'a', 'c'), { a: 1, c: 3 }, 'include prototype props');
+
+        assert.deepEqual(_.pick(data, function (val, key) {
+            return this[key] === 3 && this === instance;
+        }, instance), { c: 3 }, 'function is given context');
+
+        assert.notOk(_.has(_.pick({}, 'foo'), 'foo'), 'does not set own property if property not in object');
+        _.pick(data, function (value, key, obj) {
+            assert.strictEqual(obj, data, 'passes same object as third parameter of iteratee');
+        });
+    })
+
     QUnit.test('clone', function (assert) {
         var moe = { name: 'moe', lucky: [13, 27, 34] }
         var clone = _.clone(moe)

@@ -1035,6 +1035,32 @@
     // 只复制自己的属性覆盖到目标对象，不包括原型链上的可枚举属性
     _.extendOwn = createAssigner(_.keys)
 
+    _.pick = restArgs(function (obj, keys) {
+        var result = {}
+        if (obj == null) {
+            return result
+        }
+        var iteratee = keys[0]
+        if (_.isFunction(iteratee)) {
+            iteratee = cb(iteratee, keys[1])
+            keys = _.allKeys(obj)
+            _.each(keys, function (key) {
+                if (iteratee(obj[key], key, obj)) {
+                    result[key] = obj[key]
+                    console.log(result)
+                }
+            })
+        } else {
+            keys = _.flatten(keys)
+            _.each(keys, function (key) {
+                if (obj[key] != null) {
+                    result[key] = obj[key]
+                }
+            })
+        }
+        return result
+    })
+
     // 浅复制的克隆obj
     _.clone = function (obj) {
         // 不是引用类型
