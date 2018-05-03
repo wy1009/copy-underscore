@@ -1011,9 +1011,12 @@
         }
     }
 
-    var createAssigner = function (keysFunc) {
+    var createAssigner = function (keysFunc, defaults) {
         return function (obj) {
             var length = arguments.length
+            if (defaults) {
+                obj = Object(obj)
+            }
             if (length < 2 || obj === void 0 || obj === null) {
                 return obj
             }
@@ -1021,7 +1024,10 @@
                 var source = arguments[argI],
                     keys = keysFunc(source)
                 for (var i = 0; i < keys.length; i ++) {
-                    obj[keys[i]] = source[keys[i]]
+                    var key = keys[i]
+                    if (!defaults || obj[key] === void 0) {
+                        obj[key] = source[key]
+                    }
                 }
             }
             return obj
@@ -1078,6 +1084,9 @@
         }
         return _.pick(obj, iteratee, context)
     })
+
+    // 用defaults对象填充object中值为undefined的属性
+    _.defaults = createAssigner(_.allKeys, true)
 
     // 浅复制的克隆obj
     _.clone = function (obj) {

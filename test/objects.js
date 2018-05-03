@@ -352,6 +352,31 @@
         }, instance), { a: 1, b: 2 }, 'function is given context');
     })
 
+    QUnit.test('defaults', function (assert) {
+        var options = { zero: 0, one: 1, empty: '', nan: NaN, nothing: null };
+
+        _.defaults(options, { zero: 1, one: 10, twenty: 20, nothing: 'str' });
+        assert.strictEqual(options.zero, 0, 'value exists');
+        assert.strictEqual(options.one, 1, 'value exists');
+        assert.strictEqual(options.twenty, 20, 'default applied');
+        assert.strictEqual(options.nothing, null, "null isn't overridden");
+
+        _.defaults(options, { empty: 'full' }, { nan: 'nan' }, { word: 'word' }, { word: 'dog' });
+        assert.strictEqual(options.empty, '', 'value exists');
+        assert.ok(_.isNaN(options.nan), "NaN isn't overridden");
+        assert.strictEqual(options.word, 'word', 'new value is added, first one wins');
+
+        try {
+            options = {};
+            _.defaults(options, null, void 0, { a: 1 });
+        } catch (e) { /* ignored */ }
+
+        assert.strictEqual(options.a, 1, 'should not error on `null` or `undefined` sources');
+
+        assert.deepEqual(_.defaults(null, { a: 1 }), { a: 1 }, 'defaults skips nulls');
+        assert.deepEqual(_.defaults(void 0, { a: 1 }), { a: 1 }, 'defaults skips undefined');
+    })
+
     QUnit.test('clone', function (assert) {
         var moe = { name: 'moe', lucky: [13, 27, 34] }
         var clone = _.clone(moe)
