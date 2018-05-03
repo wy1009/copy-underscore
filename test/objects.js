@@ -318,6 +318,40 @@
         });
     })
 
+    QUnit.test('omit', function (assert) {
+        var result;
+        result = _.omit({ a: 1, b: 2, c: 3 }, 'b');
+        assert.deepEqual(result, { a: 1, c: 3 }, 'can omit a single named property');
+        result = _.omit({ a: 1, b: 2, c: 3 }, 'a', 'c');
+        assert.deepEqual(result, { b: 2 }, 'can omit several named properties');
+        result = _.omit({ a: 1, b: 2, c: 3 }, ['b', 'c']);
+        assert.deepEqual(result, { a: 1 }, 'can omit properties named in an array');
+        result = _.omit(['a', 'b'], 0);
+        assert.deepEqual(result, { 1: 'b' }, 'can omit numeric properties');
+
+        assert.deepEqual(_.omit(null, 'a', 'b'), {}, 'non objects return empty object');
+        assert.deepEqual(_.omit(void 0, 'toString'), {}, 'null/undefined return empty object');
+        assert.deepEqual(_.omit(5, 'toString', 'b'), {}, 'returns empty object for primitives');
+
+        var data = { a: 1, b: 2, c: 3 };
+        var callback = function (value, key, object) {
+            assert.strictEqual(key, { 1: 'a', 2: 'b', 3: 'c' }[value]);
+            assert.strictEqual(object, data);
+            return value !== this.value;
+        };
+        result = _.omit(data, callback, { value: 2 });
+        assert.deepEqual(result, { b: 2 }, 'can accept a predicate');
+
+        var Obj = function () { };
+        Obj.prototype = { a: 1, b: 2, c: 3 };
+        var instance = new Obj();
+        assert.deepEqual(_.omit(instance, 'b'), { a: 1, c: 3 }, 'include prototype props');
+
+        assert.deepEqual(_.omit(data, function (val, key) {
+            return this[key] === 3 && this === instance;
+        }, instance), { a: 1, b: 2 }, 'function is given context');
+    })
+
     QUnit.test('clone', function (assert) {
         var moe = { name: 'moe', lucky: [13, 27, 34] }
         var clone = _.clone(moe)

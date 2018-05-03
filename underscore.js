@@ -1035,6 +1035,7 @@
     // 只复制自己的属性覆盖到目标对象，不包括原型链上的可枚举属性
     _.extendOwn = createAssigner(_.keys)
 
+    // 返回keys中包含或通过验证对值
     _.pick = restArgs(function (obj, keys) {
         var result = {}
         if (obj == null) {
@@ -1047,7 +1048,6 @@
             _.each(keys, function (key) {
                 if (iteratee(obj[key], key, obj)) {
                     result[key] = obj[key]
-                    console.log(result)
                 }
             })
         } else {
@@ -1059,6 +1059,24 @@
             })
         }
         return result
+    })
+
+    // 返回keys中不包含或者不通过验证的值
+    _.omit = restArgs(function (obj, keys) {
+        if (obj == null) {
+            return {}
+        }
+        var iteratee = keys[0]
+        var context = keys[1]
+        if (_.isFunction(iteratee)) {
+            iteratee = _.negate(iteratee)
+        } else {
+            var keys = _.map(flatten(keys), String)
+            iteratee = function (val, key, obj) {
+                return !_.contains(keys, key)
+            }
+        }
+        return _.pick(obj, iteratee, context)
     })
 
     // 浅复制的克隆obj
