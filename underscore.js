@@ -1125,6 +1125,12 @@
         return cloneDeep(obj)
     }
 
+    // 作为链式调用的一环，执行一个方法
+    _.tap = function (obj, interceptor) {
+        interceptor(obj)
+        return obj
+    }
+
     // 检查一个对象中是否直接在它本身有某个属性，换句话说，不是原型属性
     _.has = function (obj, path) {
         if (!_.isArray(path)) {

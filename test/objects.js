@@ -436,6 +436,22 @@
         assert.notOk(_.has({ a: child }), ['a', 'foo'], '不会检测嵌套属性的prototype')
     })
 
+    QUnit.test('tap', function (assert) {
+        var intercepted = null;
+        var interceptor = function (obj) { intercepted = obj; };
+        var returned = _.tap(1, interceptor);
+        assert.strictEqual(intercepted, 1, 'passes tapped object to interceptor');
+        assert.strictEqual(returned, 1, 'returns tapped object');
+
+        returned = _([1, 2, 3]).chain().
+            map(function (n) { return n * 2; }).
+            max().
+            tap(interceptor).
+            value();
+        assert.strictEqual(returned, 6, 'can use tapped objects in a chain');
+        assert.strictEqual(intercepted, returned, 'can use tapped objects in a chain');
+    })
+
     QUnit.test('matcher', function (assert) {
         var moe = { name: 'Moe Howard', hair: true },
             curly = { name: 'Curly Howard', hair: false },
