@@ -1163,13 +1163,23 @@
         return path.length ? obj : void 0
     }
 
-    // 参数path，返回一个可以输入obj返回path（字符串或数组）属性值的函数
+    // 参数path，返回一个可以输入obj根据path（字符串或数组）返回属性值的函数
     _.property = function (path) {
         if (!_.isArray(path)) {
            return shallowProperty(path)
         }
         return function (obj) {
             return deepGet(obj, path)
+        }
+    }
+
+    // 参数obj，返回一个可以输入path返回属性值的函数
+    _.propertyOf = function (obj) {
+        if (obj == null) {
+            return function () {}
+        }
+        return function (path) {
+            return _.isArray(path) ? deepGet(obj, path) : obj[path]
         }
     }
 
