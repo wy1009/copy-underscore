@@ -610,6 +610,13 @@
     assert.notOk(_.isEmpty(nonEnumProp), 'non-enumerable property is not empty');
   })
 
+  if (typeof document === 'object') {
+    QUnit.test('isElement', function (assert) {
+      assert.notOk(_.isElement('div'), 'strings are not dom elements');
+      assert.ok(_.isElement(testElement), 'an element is a DOM element');
+    });
+  }
+
   QUnit.test('isArray', function (assert) {
     assert.notOk(_.isArray(void 0), 'undefined不是数组')
     assert.notOk(_.isArray(arguments), 'arguments不是数组')

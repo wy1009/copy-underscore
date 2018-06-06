@@ -1202,12 +1202,18 @@
     return true
   }
 
+  // 对象是否为空
   _.isEmpty = function (obj) {
     if (isArrayLike(obj) && (_.isString(obj) || _.isArray(obj) || _.isArguments(obj))) {
       return obj.length === 0
     } else {
       return _.keys(obj).length === 0
     }
+  }
+
+  // 是否为一个DOM元素
+  _.isElement = function (obj) {
+    return !!(obj && obj.nodeType === 1)
   }
 
   // 传入的变量是否为数组
