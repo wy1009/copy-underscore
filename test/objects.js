@@ -586,6 +586,30 @@
     assert.deepEqual(_.map([null, void 0, 5, {}], _.partial(_.isMatch, _, oCon)), [false, false, false, true])
   })
 
+  QUnit.test('isEmpty', function (assert) {
+    assert.notOk(_([1]).isEmpty(), '[1] is not empty');
+    assert.ok(_.isEmpty([]), '[] is empty');
+    assert.notOk(_.isEmpty({ one: 1 }), '{one: 1} is not empty');
+    assert.ok(_.isEmpty({}), '{} is empty');
+    assert.ok(_.isEmpty(new RegExp('')), 'objects with prototype properties are empty');
+    assert.ok(_.isEmpty(null), 'null is empty');
+    assert.ok(_.isEmpty(), 'undefined is empty');
+    assert.ok(_.isEmpty(''), 'the empty string is empty');
+    assert.notOk(_.isEmpty('moe'), 'but other strings are not');
+
+    var obj = { one: 1 };
+    delete obj.one;
+    assert.ok(_.isEmpty(obj), 'deleting all the keys from an object empties it');
+
+    var args = function () { return arguments; };
+    assert.ok(_.isEmpty(args()), 'empty arguments object is empty');
+    assert.notOk(_.isEmpty(args('')), 'non-empty arguments object is not empty');
+
+    // covers collecting non-enumerable properties in IE < 9
+    var nonEnumProp = { toString: 5 };
+    assert.notOk(_.isEmpty(nonEnumProp), 'non-enumerable property is not empty');
+  })
+
   QUnit.test('isArray', function (assert) {
     assert.notOk(_.isArray(void 0), 'undefined不是数组')
     assert.notOk(_.isArray(arguments), 'arguments不是数组')

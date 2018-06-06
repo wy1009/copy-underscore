@@ -1202,6 +1202,14 @@
     return true
   }
 
+  _.isEmpty = function (obj) {
+    if (isArrayLike(obj) && (_.isString(obj) || _.isArray(obj) || _.isArguments(obj))) {
+      return obj.length === 0
+    } else {
+      return _.keys(obj).length === 0
+    }
+  }
+
   // 传入的变量是否为数组
   _.isArray = Array.isArray || function (obj) {
     // 借用Object原型上的函数，保证原型链上没有Object.prototype的变量也能使用该方法
