@@ -1234,14 +1234,19 @@
     return typeof obj === 'function'
   }
 
-  // 传入的变量是否是NaN
-  _.isNaN = function (obj) {
-    return _.isNumber(obj) && isNaN(obj)
+  // 是否为有限的数字
+  _.isFinite = function (obj) {
+    return !_.isSymbol(obj) && isFinite(obj) && !isNaN(parseFloat(obj))
   }
 
   // 传入变量是否为布尔值
   _.isBoolean = function (obj) {
     return obj === true || obj === false || Object.prototype.toString.call(obj) === '[object Boolean]'
+  }
+
+  // 传入的变量是否是NaN
+  _.isNaN = function (obj) {
+    return _.isNumber(obj) && isNaN(obj)
   }
 
   _.each(['Arguments', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function (item) {

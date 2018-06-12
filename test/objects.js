@@ -652,6 +652,27 @@
     nodeList && assert.notOk(_.isFunction(nodeList))
   })
 
+  QUnit.test('isFinite', function (assert) {
+    assert.notOk(_.isFinite(void 0), 'undefined is not finite');
+    assert.notOk(_.isFinite(null), 'null is not finite');
+    assert.notOk(_.isFinite(NaN), 'NaN is not finite');
+    assert.notOk(_.isFinite(Infinity), 'Infinity is not finite');
+    assert.notOk(_.isFinite(-Infinity), '-Infinity is not finite');
+    assert.ok(_.isFinite('12'), 'Numeric strings are numbers');
+    assert.notOk(_.isFinite('1a'), 'Non numeric strings are not numbers');
+    assert.notOk(_.isFinite(''), 'Empty strings are not numbers');
+    var obj = new Number(5);
+    assert.ok(_.isFinite(obj), 'Number instances can be finite');
+    assert.ok(_.isFinite(0), '0 is finite');
+    assert.ok(_.isFinite(123), 'Ints are finite');
+    assert.ok(_.isFinite(-12.44), 'Floats are finite');
+    if (typeof Symbol === 'function') {
+      assert.notOk(_.isFinite(Symbol()), 'symbols are not numbers');
+      assert.notOk(_.isFinite(Symbol('description')), 'described symbols are not numbers');
+      assert.notOk(_.isFinite(Object(Symbol())), 'boxed symbols are not numbers');
+    }
+  });
+
   QUnit.test('isBoolean', function (assert) {
     assert.notOk(_.isBoolean(2), '数字不是布尔值');
     assert.notOk(_.isBoolean('string'), '字符串不是布尔值');
