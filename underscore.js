@@ -1249,6 +1249,14 @@
     return _.isNumber(obj) && isNaN(obj)
   }
 
+  _.isNull = function (obj) {
+    return obj === null
+  }
+
+  _.isUndefined = function (obj) {
+    return obj === void 0
+  }
+
   _.each(['Arguments', 'String', 'Number', 'Date', 'RegExp', 'Error', 'Symbol', 'Map', 'WeakMap', 'Set', 'WeakSet'], function (item) {
     _['is' + item] = function (obj) {
       return Object.prototype.toString.call(obj) === '[object ' + item + ']'

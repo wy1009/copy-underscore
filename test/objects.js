@@ -685,4 +685,19 @@
     assert.ok(_.isBoolean(true), 'true是布尔值');
     assert.ok(_.isBoolean(false), 'false是布尔值');
   });
+
+  QUnit.test('isNull', function (assert) {
+    assert.notOk(_.isNull(void 0), 'undefined is not null');
+    assert.notOk(_.isNull(NaN), 'NaN is not null');
+    assert.ok(_.isNull(null), 'but null is');
+  });
+
+  QUnit.test('isUndefined', function (assert) {
+    assert.notOk(_.isUndefined(1), 'numbers are defined');
+    assert.notOk(_.isUndefined(null), 'null is defined');
+    assert.notOk(_.isUndefined(false), 'false is defined');
+    assert.notOk(_.isUndefined(NaN), 'NaN is defined');
+    assert.ok(_.isUndefined(), 'nothing is undefined');
+    assert.ok(_.isUndefined(void 0), 'undefined is undefined');
+  });
 })()
